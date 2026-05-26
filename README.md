@@ -6,9 +6,6 @@
 그리고, 직전 제7회 지방선거(2018) 및 제20대 대통령선거(2022)와의 표심 변화·
 상관관계를 함께 살펴봅니다.
 
-> 저장소 이름 제안: 현재의 `analysis_of_the_8th_local_election_data` 대신
-> `kr-local-election-2022` 또는 `local-election-8th-analysis` 같은 짧은 이름을 권장합니다.
-
 <img width="80%" src="https://user-images.githubusercontent.com/77545063/200377493-37fb592b-9b97-45d5-aebe-8c1c6c5861a1.png"/>
 
 ## 주요 분석
