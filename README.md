@@ -25,7 +25,7 @@
 
 - **언어**: R
 - **시각화**: `ggplot2`, `gridExtra`, `plotrix` (3D 파이차트), 기본 그래픽 (`symbols`, `plot`)
-- **공간 데이터**: `sp` 기반 `raster`, `rgeos`, `maptools`, `ggmap` — `ctp_rvn.shp`
+- **공간 데이터**: `sp` 기반 `raster`, `ggmap` — `ctp_rvn.shp`
   (`data/shapefiles/ctp_rvn.shp`, 시·도 행정경계) 로드 및 `+proj=longlat` 재투영
 - **통계**: `MASS`, `agricolae`, 기본 `lm` / `cor` (회귀·상관분석)
 
@@ -74,8 +74,8 @@ setwd("~/code/analysis_of_the_8th_local_election_data")
 
 # 필요 패키지 설치 (최초 1회)
 install.packages(c(
-  "ggplot2", "ggmap", "raster", "rgeos", "maptools",
-  "plotrix", "MASS", "agricolae", "gridExtra"
+  "ggplot2", "ggmap", "raster",
+  "plotrix", "agricolae", "gridExtra"
 ))
 
 # 분석 실행
@@ -83,8 +83,9 @@ source("src/08_local_election_map.R")
 source("src/presidential_local_correlation.R")
 ```
 
-> `rgeos` / `maptools` 는 CRAN 보관(retired) 패키지입니다. 최신 R에서는
-> `sf` 기반으로 마이그레이션이 권장됩니다.
+> 본 프로젝트는 `raster::shapefile()` 만 사용하므로 CRAN retired 패키지인
+> `rgeos` / `maptools` 는 더 이상 필요하지 않습니다. 장기적으로는 `sf` 기반
+> 마이그레이션이 권장됩니다.
 
 ## 발표 자료
 

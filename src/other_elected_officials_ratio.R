@@ -1,11 +1,11 @@
 rm(list=ls())
 library(plotrix)
 
-vote_7_etc=read.csv("data/07_local_other_vote_share.csv",header=T)
+vote_7_etc=read.csv("data/07_local_other_vote_share.csv",header=T,fileEncoding="UTF-8")
 기초자치단체장_7=as.numeric(vote_7_etc[1,c(2:4)])
 광역의회의원_7=as.numeric(vote_7_etc[2,c(2:4)])
 기초의회의원_7=as.numeric(vote_7_etc[3,c(2:4)])
-vote_8_etc=read.csv("data/08_local_other_vote_share.csv",header=T)
+vote_8_etc=read.csv("data/08_local_other_vote_share.csv",header=T,fileEncoding="UTF-8")
 기초자치단체장_8=as.numeric(vote_8_etc[1,c(2:4)])
 광역의회의원_8=as.numeric(vote_8_etc[2,c(2:4)])
 기초의회의원_8=as.numeric(vote_8_etc[3,c(2:4)])
