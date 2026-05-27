@@ -1,4 +1,22 @@
-# 제8회 전국동시지방선거 데이터 분석
+<div align="center">
+
+# korea-local-election-2022
+
+**제8회 전국동시지방선거 R 시각화·분석**
+**R-based visualization and analysis of Korea's 8th local election (June 2022)**
+
+![Language](https://img.shields.io/badge/language-R-276DC3?logo=r&logoColor=white)
+![Domain](https://img.shields.io/badge/domain-election%20analysis-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Year](https://img.shields.io/badge/year-2022-blue)
+
+**한국어** · [English](#english)
+
+</div>
+
+---
+
+## 개요
 
 > 2022년 6월 1일 치러진 제8회 전국동시지방선거 결과를 R로 시각화·분석한 프로젝트
 
@@ -66,11 +84,11 @@
 ## 실행 방법
 
 RStudio 또는 R 콘솔에서 저장소 루트를 작업 디렉터리로 지정한 뒤 원하는 스크립트를
-실행합니다. 모든 경로는 저장소 루트 기준 상대경로로 작성되어 있습니다.
+실행하면 됩니다. 모든 경로는 저장소 루트 기준 상대경로로 작성되어 있습니다.
 
 ```r
-# 예: 저장소 루트가 ~/code/analysis_of_the_8th_local_election_data 인 경우
-setwd("~/code/analysis_of_the_8th_local_election_data")
+# 저장소 루트로 이동
+setwd("/path/to/korea-local-election-2022")
 
 # 필요 패키지 설치 (최초 1회)
 install.packages(c(
@@ -83,10 +101,107 @@ source("src/08_local_election_map.R")
 source("src/presidential_local_correlation.R")
 ```
 
-> 본 프로젝트는 `raster::shapefile()` 만 사용하므로 CRAN retired 패키지인
-> `rgeos` / `maptools` 는 더 이상 필요하지 않습니다. 장기적으로는 `sf` 기반
-> 마이그레이션이 권장됩니다.
+이 프로젝트는 `raster::shapefile()` 만 사용하므로 CRAN에서 retired된
+`rgeos` / `maptools` 는 필요하지 않습니다. 장기적으로는 `sf` 기반
+마이그레이션이 권장됩니다.
 
 ## 발표 자료
 
 - 발표 슬라이드: [`docs/presentation.pptx`](docs/presentation.pptx)
+
+## 라이선스
+
+[MIT License](./LICENSE)
+
+---
+
+<a name="english"></a>
+
+## English
+
+> R-based visualization and analysis of the 8th Korean local election held on June 1, 2022.
+
+Maps province-level vote shares onto Korean administrative shapefiles as choropleths, and
+compares them with the previous 7th local election (2018) and the 20th presidential election
+(March 2022) to track regional vote-pattern shifts and correlations.
+
+<img width="80%" src="https://user-images.githubusercontent.com/77545063/200377493-37fb592b-9b97-45d5-aebe-8c1c6c5861a1.png"/>
+
+### Analyses
+
+- **Province-level choropleth** — maps the 1st vs. 2nd party vote gap onto `data/shapefiles/ctp_rvn.shp` for both the 7th and 8th elections; one map shows the shift in voter sentiment.
+- **Presidential-vs-local correlation** — correlation coefficients and regression lines between the 20th presidential election (2022.03) and the 8th local election (2022.06) by party (Democratic / People Power) at the province level.
+- **Vote share by gender and age** — bubble chart of party support from the 8th local exit poll, broken out by gender × age band (bubble size = turnout).
+- **Other elected positions** — 3D pie charts comparing the party mix of mayors / provincial council / municipal council winners across the 7th and 8th elections.
+- **Regional party-support trend** — bar chart of the 7th → 8th delta in Democratic / People Power vote share for each of the 17 provinces.
+
+### Stack
+
+- **Language**: R
+- **Visualization**: `ggplot2`, `gridExtra`, `plotrix` (3D pies), base graphics (`symbols`, `plot`)
+- **Spatial**: `sp`-based `raster`, `ggmap` — loads `ctp_rvn.shp` and reprojects to `+proj=longlat`
+- **Statistics**: `MASS`, `agricolae`, base `lm` / `cor`
+
+### Data
+
+- National Election Commission Election Statistics System ([info.nec.go.kr](http://info.nec.go.kr)) — 7th / 8th local + 20th presidential province-level vote shares (`data/*.csv`).
+- National Spatial Data Infrastructure Portal — province administrative shapefile (`data/shapefiles/ctp_rvn.*`).
+
+### Layout
+
+```
+.
+├── src/                                       # R analysis scripts
+│   ├── 07_local_election_map.R                # 7th local choropleth
+│   ├── 08_local_election_map.R                # 8th local choropleth
+│   ├── presidential_local_correlation.R       # presidential-local correlation
+│   ├── vote_share_by_gender_age.R             # gender × age bubble chart
+│   ├── other_elected_officials_ratio.R        # mayor / council party ratios
+│   └── regional_party_support_trend.R         # regional party-support delta
+├── data/                                      # data
+│   ├── 07_local_vote_share.csv                #   preprocessed vote-share CSV
+│   ├── 07_local_other_vote_share.csv
+│   ├── 08_local_vote_share.csv
+│   ├── 08_local_other_vote_share.csv
+│   ├── 08_local_male_age_vote_share.csv
+│   ├── 08_local_female_age_vote_share.csv
+│   ├── 20th_presidential_vote_share.csv
+│   └── shapefiles/                            #   province administrative shapefile bundle
+│       ├── ctp_rvn.shp                        #     (the four files must sit together
+│       ├── ctp_rvn.shx                        #      under the same basename for GDAL
+│       ├── ctp_rvn.dbf                        #      to load them as one shapefile)
+│       └── ctp_rvn.prj
+└── docs/
+    └── presentation.pptx                      # presentation slides
+```
+
+### Run
+
+From RStudio or an R console, set the repo root as the working directory, then source the script you want. All paths are written relative to the repo root.
+
+```r
+# move to repo root
+setwd("/path/to/korea-local-election-2022")
+
+# install required packages (first time only)
+install.packages(c(
+  "ggplot2", "ggmap", "raster",
+  "plotrix", "agricolae", "gridExtra"
+))
+
+# run an analysis
+source("src/08_local_election_map.R")
+source("src/presidential_local_correlation.R")
+```
+
+The project only uses `raster::shapefile()`, so the CRAN-retired
+`rgeos` / `maptools` packages are not required. A migration to `sf`
+is the recommended longer-term direction.
+
+### Materials
+
+- Presentation slides: [`docs/presentation.pptx`](docs/presentation.pptx)
+
+### License
+
+[MIT License](./LICENSE)
