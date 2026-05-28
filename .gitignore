@@ -8,6 +8,9 @@
 .Rproj.user/
 *.Rproj
 
+# Generated figures (regenerate via Rscript src/run_all.R)
+figures/
+
 # OS
 .DS_Store
 Thumbs.db
