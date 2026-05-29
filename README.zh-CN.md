@@ -5,6 +5,7 @@
 **第 8 届韩国全国同时地方选举的 R 可视化与分析**
 
 ![Language](https://img.shields.io/badge/language-R-276DC3?logo=r&logoColor=white)
+[![Verify](https://github.com/jumincho/korea-local-election-2022/actions/workflows/verify.yml/badge.svg)](https://github.com/jumincho/korea-local-election-2022/actions/workflows/verify.yml)
 ![Domain](https://img.shields.io/badge/domain-election%20analysis-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Year](https://img.shields.io/badge/year-2022-blue)
