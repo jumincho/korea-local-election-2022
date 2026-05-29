@@ -8,7 +8,7 @@ suppressMessages(library(ggplot2))
 korea_map <- ggplot2::fortify(load_korea_shapefile())
 
 local7 <- load_vote_csv("07_local_vote_share")[1:17, ]
-local7$id <- 0:16  # fortify polygon id 와 매칭 (서울 → 제주 순서)
+local7$id <- as.character(0:16)  # fortify polygon id(문자형) 와 매칭 (서울 → 제주 순서)
 
 # 1위 정당 결정.
 local7$win <- ifelse(

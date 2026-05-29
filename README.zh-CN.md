@@ -42,7 +42,7 @@
 
 - **语言**: R
 - **可视化**: `ggplot2`、`gridExtra`、`plotrix` (3D 饼图)、基础图形 (`symbols`、`plot`、`abline`)
-- **空间数据**: 基于 `sp` 的 `raster`、`ggmap` —— 加载 `data/shapefiles/ctp_rvn.shp` 并投影到 `+proj=longlat`
+- **空间数据**: `raster` + `sp` —— 加载 `data/shapefiles/ctp_rvn.shp` 并投影到 `+proj=longlat`
 - **统计**: 基础 `lm` / `cor`
 - **工具**: `here` (基于仓库根目录的相对路径)
 
@@ -73,7 +73,7 @@
 
 ```bash
 # 1) 安装所需包 (仅首次)
-Rscript -e 'install.packages(c("here", "ggplot2", "ggmap", "raster", "plotrix", "gridExtra"))'
+Rscript -e 'install.packages(c("here", "ggplot2", "raster", "sp", "plotrix", "gridExtra"))'
 
 # 2) 运行所有分析 —— 在 figures/ 下生成 PNG
 Rscript src/run_all.R

@@ -12,7 +12,7 @@ male$성별   <- "남성"
 female$성별 <- "여성"
 
 
-# wide → long: 정당 두 개를 한 컴럼으로 펴서 ggplot 에 넘김.
+# wide → long: 정당 두 개를 한 컬럼으로 펴서 ggplot 에 넘김.
 to_long <- function(df) {
   rbind(
     data.frame(성별 = df$성별, 연령 = df$연령, 정당 = "더불어민주당",

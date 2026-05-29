@@ -9,16 +9,21 @@
 #   - save_base_figure(name, expr, ...)   # base R draws → figures/<name>.png
 #   - KOREA_PROVINCES                     # 17 시·도 표준 순서 (서울 → 제주)
 #
-# Required packages: here, raster, ggplot2, ggmap (loaded lazily by callers).
+# Required packages: here, raster, sp, ggplot2 (loaded lazily by callers).
+# (gridExtra / plotrix are used by individual scripts.)
 
 suppressMessages(library(here))
 
 
 load_korea_shapefile <- function(crs = "+proj=longlat") {
-  suppressMessages(library(raster))
+  suppressMessages({
+    library(raster)
+    library(sp)
+  })
   # rgeos / maptools 는 CRAN retired — raster::shapefile() 로 대체.
-  korea <- shapefile(here("data", "shapefiles", "ctp_rvn.shp"))
-  spTransform(korea, CRS(crs))
+  # spTransform / CRS 는 sp 패키지 함수 — raster가 sp를 attach하지 않을 수 있어 명시적으로 지정.
+  korea <- raster::shapefile(here("data", "shapefiles", "ctp_rvn.shp"))
+  sp::spTransform(korea, sp::CRS(crs))
 }
 
 
