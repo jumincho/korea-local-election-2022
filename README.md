@@ -43,7 +43,7 @@
 
 - **언어**: R
 - **시각화**: `ggplot2`, `gridExtra`, `plotrix` (3D 파이차트), 기본 그래픽 (`symbols`, `plot`, `abline`)
-- **공간 데이터**: `sp` 기반 `raster`, `ggmap` — `data/shapefiles/ctp_rvn.shp`
+- **공간 데이터**: `raster` + `sp` — `data/shapefiles/ctp_rvn.shp`
   (시·도 행정경계) 로드 및 `+proj=longlat` 재투영
 - **통계**: 기본 `lm` / `cor` (회귀·상관분석)
 - **유틸**: `here` (저장소 루트 기준 상대경로)
@@ -86,7 +86,7 @@
 
 ```bash
 # 1) 필요 패키지 설치 (최초 1회)
-Rscript -e 'install.packages(c("here", "ggplot2", "ggmap", "raster", "plotrix", "gridExtra"))'
+Rscript -e 'install.packages(c("here", "ggplot2", "raster", "sp", "plotrix", "gridExtra"))'
 
 # 2) 모든 분석 실행 — figures/ 아래 PNG 생성
 Rscript src/run_all.R
@@ -139,7 +139,7 @@ All figures are written to `figures/` on run.
 
 - **Language**: R
 - **Visualization**: `ggplot2`, `gridExtra`, `plotrix` (3D pies), base graphics (`symbols`, `plot`, `abline`)
-- **Spatial**: `sp`-based `raster`, `ggmap` — loads `data/shapefiles/ctp_rvn.shp` and reprojects to `+proj=longlat`
+- **Spatial**: `raster` + `sp` — loads `data/shapefiles/ctp_rvn.shp` and reprojects to `+proj=longlat`
 - **Statistics**: base `lm` / `cor`
 - **Utility**: `here` (repo-relative paths)
 
@@ -170,7 +170,7 @@ All figures are written to `figures/` on run.
 
 ```bash
 # 1) Install required packages (first time only)
-Rscript -e 'install.packages(c("here", "ggplot2", "ggmap", "raster", "plotrix", "gridExtra"))'
+Rscript -e 'install.packages(c("here", "ggplot2", "raster", "sp", "plotrix", "gridExtra"))'
 
 # 2) Run all analyses — writes PNGs under figures/
 Rscript src/run_all.R
