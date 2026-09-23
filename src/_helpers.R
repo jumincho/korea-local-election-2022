@@ -4,7 +4,7 @@
 #
 # Provided:
 #   - load_korea_shapefile(crs = "+proj=longlat")
-#   - load_vote_csv(name)                 # data/<name>.csv with UTF-8 encoding
+#   - load_vote_csv(name)                 # data-raw/original/<name>.csv (UTF-8)
 #   - save_figure(name, plot, ...)        # ggplot → figures/<name>.png
 #   - save_base_figure(name, expr, ...)   # base R draws → figures/<name>.png
 #   - KOREA_PROVINCES                     # 17 시·도 표준 순서 (서울 → 제주)
@@ -28,7 +28,7 @@ load_korea_shapefile <- function(crs = "+proj=longlat") {
 
 
 load_vote_csv <- function(name) {
-  path <- here("data", paste0(name, ".csv"))
+  path <- here("data-raw", "original", paste0(name, ".csv"))
   read.csv(path, header = TRUE, fileEncoding = "UTF-8")
 }
 
