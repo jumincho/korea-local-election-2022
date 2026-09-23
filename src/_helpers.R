@@ -22,7 +22,7 @@ load_korea_shapefile <- function(crs = "+proj=longlat") {
   })
   # rgeos / maptools 는 CRAN retired — raster::shapefile() 로 대체.
   # spTransform / CRS 는 sp 패키지 함수 — raster가 sp를 attach하지 않을 수 있어 명시적으로 지정.
-  korea <- raster::shapefile(here("data", "shapefiles", "ctp_rvn.shp"))
+  korea <- raster::shapefile(here("data-raw", "shapefile", "ctp_rvn.shp"))
   sp::spTransform(korea, sp::CRS(crs))
 }
 

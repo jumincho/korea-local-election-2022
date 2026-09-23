@@ -5,3 +5,7 @@ eaac904d215e8f57d6d704de9691311b  data-raw/original/08_local_male_age_vote_share
 71145183c5529a88d1397cf42090635c  data-raw/original/08_local_other_vote_share.csv
 9637bf00a99516c011f97ba07a90a60f  data-raw/original/08_local_vote_share.csv
 bb40153e7b0c18b5a6182222818a8196  data-raw/original/20th_presidential_vote_share.csv
+c86877af9802f233447703a7f817a9de  data-raw/shapefile/ctp_rvn.dbf
+968901558e3c4b42fd2924690b6ebb24  data-raw/shapefile/ctp_rvn.prj
+0ec1d4a66d18d6ba6d615dcbdd15c75a  data-raw/shapefile/ctp_rvn.shp
+32634714700c2a9a6b2728dadb3a81ea  data-raw/shapefile/ctp_rvn.shx
