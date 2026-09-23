@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, test and rebuild
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LANG: C.UTF-8
+    steps:
+      - uses: actions/checkout@v7
+
+      # R and every package come from the Ubuntu archive, so no third-party
+      # setup action is needed.
+      - name: Install R and packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            r-base-core r-cran-sf r-cran-ggplot2 r-cran-dplyr r-cran-tidyr \
+            r-cran-readr r-cran-patchwork r-cran-ggrepel r-cran-scales \
+            r-cran-testthat r-cran-lintr r-cran-ragg r-cran-here
+
+      - name: Versions
+        run: Rscript -e 'sessionInfo(); sf::sf_extSoftVersion()'
+
+      - name: Lint
+        run: make lint
+
+      - name: Test
+        run: make test
+
+      - name: Rebuild data/ from the original files and compare
+        run: |
+          make data
+          git diff --exit-code --stat -- data/
+
+      - name: Regenerate figures and key statistics
+        run: |
+          make figures
+          git diff --exit-code -- results/
+
+      - name: Upload figures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: figures
+          path: figures/*.png
+          if-no-files-found: error
