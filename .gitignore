@@ -1,15 +1,13 @@
-# R session
+# R session files
 .Rhistory
 .RData
 .Ruserdata
 .Rapp.history
+Rplots.pdf
 
 # RStudio
 .Rproj.user/
 *.Rproj
-
-# Generated figures (regenerate via Rscript src/run_all.R)
-figures/
 
 # OS
 .DS_Store

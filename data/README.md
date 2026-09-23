@@ -154,8 +154,11 @@ into the tables here; see [`data-raw/README.md`](../data-raw/README.md).
   blank cells, and fails on anything it cannot match. It changes no values.
 - [`data-raw/build_province_geometry.R`](../data-raw/build_province_geometry.R)
   builds the GeoJSON (see [Boundaries](#boundaries)).
-- Both scripts run from the repository root, e.g.
-  `Rscript data-raw/tidy_election_data.R`.
+- [`tests/testthat/test-raw-equivalence.R`](../tests/testthat/test-raw-equivalence.R)
+  re-reads the original CSVs with a separate base-R parser and checks that every
+  value in the tidy tables equals the corresponding cell, with none missing or
+  added.
+- `make data` reruns both scripts.
 
 The CSVs are UTF-8 copies of the CP949-encoded files first uploaded on
 8 November 2022 (commit `056dfc9`, folder `datasets (preprocessed)`).
@@ -209,14 +212,18 @@ noted under [Caveats](#caveats). Their English names include a typo
 
 The result has about 21,000 vertices and takes 564 KiB. The total area is
 100,065 km², against 100,058 km² in the source, and no province changes by more
-than 0.4 %.
+than 0.4 %. The tests in
+[`tests/testthat/test-geometry.R`](../tests/testthat/test-geometry.R) repeat
+these checks, and check the join with the vote data.
 
 ## Caveats
 
 1. **Unweighted provinces.** The tables are at province level, so statistics
    computed across them treat the 17 provinces equally, whatever their
    population. Correlations over 17 points have wide confidence intervals.
-2. **Not every candidate is recorded**, so shares do not always add up to 100:
+2. **Not every candidate is recorded**, so shares do not always add up to 100.
+   [`tests/testthat/test-data.R`](../tests/testthat/test-data.R) pins each of
+   these cases, so a change to the data cannot go unnoticed:
    - Presidential election: only the three main candidates are recorded
      (Democratic, People Power and Justice parties), to one decimal place.
      Their shares add up to between 98.1 and 99.1.
@@ -231,7 +238,7 @@ than 0.4 %.
 3. **Exit-poll turnout.** Turnout is the same for the 60s and 70s groups within
    each sex (73.9 % for men, 62.9 % for women). That suggests a single figure
    for everyone aged 60 and over was copied into both rows. It is kept as
-   recorded.
+   recorded, and figure 6 marks the repeated values.
 4. **Exit-poll age groups** are labelled 20 to 70 in the original file. Exit
    polls often fold 18- and 19-year-olds into the youngest group, and
    everyone older into the oldest, but the file does not say.

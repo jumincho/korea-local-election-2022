@@ -1,0 +1,13 @@
+linters: linters_with_defaults(
+    line_length_linter(100),
+    # snake_case everywhere, plus UPPER_CASE for top-level constants.
+    object_name_linter(
+      styles = c("snake_case", "symbols"),
+      regexes = c(constant = "^[A-Z][A-Z0-9_]*$")
+    ),
+    # R/ is sourced by scripts and tests rather than installed as a package, so
+    # codetools cannot see functions defined in sibling files or the .data
+    # pronoun; the tests exercise every function instead.
+    object_usage_linter = NULL
+  )
+encoding: "UTF-8"

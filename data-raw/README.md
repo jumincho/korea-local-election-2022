@@ -15,10 +15,11 @@ Nothing else reads these files.
 | [`original/08_local_female_age_vote_share.csv`](original/08_local_female_age_vote_share.csv) | 2022 exit poll, women: the same | `tidy_election_data.R` |
 | [`shapefile/`](shapefile): `ctp_rvn.shp`, `.shx`, `.dbf`, `.prj` | Boundaries of the 17 provinces: 13 MB, 810,000 vertices, attributes encoded in CP949 | [`build_province_geometry.R`](build_province_geometry.R) |
 
-The scripts write `vote_share.csv`, `exit_poll_2022.csv`,
-`elected_officials_share.csv` and `geo/provinces.geojson` to
-[`data/`](../data). Run them from the repository root, e.g.
-`Rscript data-raw/tidy_election_data.R`.
+`make data` runs both scripts. They write `vote_share.csv`,
+`exit_poll_2022.csv`, `elected_officials_share.csv` and
+`geo/provinces.geojson` to [`data/`](../data), and
+[`tests/testthat/test-raw-equivalence.R`](../tests/testthat/test-raw-equivalence.R)
+checks that every value in the tidy tables equals the corresponding cell here.
 
 ## Where they came from
 
@@ -47,4 +48,4 @@ Don't edit these files. Corrections belong in the scripts, where they can be
 reviewed, and known problems are documented in the
 [caveats](../data/README.md#caveats). [`MD5SUMS`](MD5SUMS) records the
 checksum of every file here. To confirm that none has changed, run
-`md5sum -c data-raw/MD5SUMS` from the repository root.
+`md5sum -c data-raw/MD5SUMS` from the repository root; `make test` checks too.
