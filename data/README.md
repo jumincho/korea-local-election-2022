@@ -158,7 +158,8 @@ into the tables here; see [`data-raw/README.md`](../data-raw/README.md).
   re-reads the original CSVs with a separate base-R parser and checks that every
   value in the tidy tables equals the corresponding cell, with none missing or
   added.
-- `make data` reruns both scripts.
+- `make data` reruns both scripts. CI does this on every push, and fails if the
+  result differs from the committed files.
 
 The CSVs are UTF-8 copies of the CP949-encoded files first uploaded on
 8 November 2022 (commit `056dfc9`, folder `datasets (preprocessed)`).
