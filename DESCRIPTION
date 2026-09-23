@@ -1,0 +1,33 @@
+Package: korealocalelection2022
+Title: Province-Level Analysis of South Korea's 2022 Local Elections
+Version: 1.0.0
+Authors@R:
+    person("Jumin", "Cho", role = c("aut", "cre"))
+Description: Tidy, documented province-level results of South Korea's 7th
+    (2018) and 8th (2022) nationwide local elections and the 20th
+    presidential election (2022), simplified province boundaries, and the R
+    code that validates the data and reproduces every figure and statistic in
+    the README. This is an analysis project, not an installable package; the
+    file declares its dependencies so that remotes::install_deps() can set up
+    an environment.
+License: MIT + file LICENSE
+URL: https://github.com/jumincho/korea-local-election-2022
+BugReports: https://github.com/jumincho/korea-local-election-2022/issues
+Depends:
+    R (>= 4.1.0)
+Imports:
+    dplyr (>= 1.1.0),
+    ggplot2 (>= 3.4.0),
+    ggrepel,
+    here,
+    patchwork,
+    ragg,
+    readr (>= 2.0.0),
+    scales,
+    sf (>= 1.0-10),
+    tidyr (>= 1.3.0)
+Suggests:
+    lintr (>= 3.0.0),
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Encoding: UTF-8

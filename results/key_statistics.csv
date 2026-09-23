@@ -1,0 +1,67 @@
+statistic,value,unit,detail
+governor_races_won.local_2018.dpk,14,races,
+governor_races_won.local_2018.lkp,2,races,
+governor_races_won.local_2018.independent,1,races,
+governor_races_won.local_2022.ppp,12,races,
+governor_races_won.local_2022.dpk,5,races,
+margin_2022.closest,-0.15,pp,Gyeonggi
+margin_2022.second_closest,2.39,pp,Daejeon
+margin_2022.races_within_5pp,2,races,
+margin_2022.largest_ppp_lead,60.78,pp,Daegu
+margin_2022.largest_dpk_lead,-64.23,pp,Jeonbuk
+swing_2018_2022.democratic.provinces_compared,17,provinces,
+swing_2018_2022.democratic.provinces_up,2,provinces,"Jeonbuk, Jeju"
+swing_2018_2022.democratic.median_change,-13.11,pp,
+swing_2018_2022.democratic.min_change,-24.14,pp,Sejong
+swing_2018_2022.democratic.max_change,15.13,pp,Jeju
+swing_2018_2022.conservative.provinces_compared,15,provinces,
+swing_2018_2022.conservative.provinces_up,15,provinces,"Seoul, Busan, Daegu, Incheon, Daejeon, Ulsan, Sejong, Gyeonggi, Gangwon, Chungbuk, Chungnam, Jeonbuk, Gyeongbuk, Gyeongnam, Jeju"
+swing_2018_2022.conservative.median_change,22.75,pp,
+swing_2018_2022.conservative.min_change,13.4,pp,Gyeonggi
+swing_2018_2022.conservative.max_change,36.22,pp,Jeju
+correlation.presidential_vs_local_2022.democratic.r,0.974,r,
+correlation.presidential_vs_local_2022.democratic.conf_low,0.927,r,
+correlation.presidential_vs_local_2022.democratic.conf_high,0.991,r,
+correlation.presidential_vs_local_2022.democratic.n,17,provinces,
+correlation.presidential_vs_local_2022.democratic.mean_difference,-3.025,pp,unweighted mean over provinces of (second election - first)
+correlation.presidential_vs_local_2022.conservative.r,0.985,r,
+correlation.presidential_vs_local_2022.conservative.conf_low,0.957,r,
+correlation.presidential_vs_local_2022.conservative.conf_high,0.995,r,
+correlation.presidential_vs_local_2022.conservative.n,17,provinces,
+correlation.presidential_vs_local_2022.conservative.mean_difference,4.558,pp,unweighted mean over provinces of (second election - first)
+correlation.local_2018_vs_2022.democratic.r,0.769,r,
+correlation.local_2018_vs_2022.democratic.conf_low,0.457,r,
+correlation.local_2018_vs_2022.democratic.conf_high,0.912,r,
+correlation.local_2018_vs_2022.democratic.n,17,provinces,
+correlation.local_2018_vs_2022.democratic.mean_difference,-11.585,pp,unweighted mean over provinces of (second election - first)
+correlation.local_2018_vs_2022.conservative.r,0.87,r,
+correlation.local_2018_vs_2022.conservative.conf_low,0.644,r,
+correlation.local_2018_vs_2022.conservative.conf_high,0.956,r,
+correlation.local_2018_vs_2022.conservative.n,15,provinces,
+correlation.local_2018_vs_2022.conservative.mean_difference,23.949,pp,unweighted mean over provinces of (second election - first)
+exit_poll.male_20s.ppp,65.1,%,
+exit_poll.male_20s.dpk,32.9,%,
+exit_poll.female_20s.dpk,66.8,%,
+exit_poll.female_20s.ppp,30,%,
+exit_poll.widest_sex_difference,69,pp,"PPP-minus-DPK gap, men minus women, age 20s"
+exit_poll.groups_led_by_dpk,5,groups,"male 40s, male 50s, female 20s, female 30s, female 40s"
+exit_poll.turnout_min,29.7,%,male 20s
+exit_poll.turnout_max,73.9,%,"male 60s, male 70s"
+officials.municipal_head.local_2018.democratic,66.81,%,
+officials.municipal_head.local_2018.conservative,23.45,%,
+officials.municipal_head.local_2018.other,9.73,%,
+officials.provincial_council.local_2018.democratic,78.65,%,
+officials.provincial_council.local_2018.conservative,16.53,%,
+officials.provincial_council.local_2018.other,4.82,%,
+officials.municipal_council.local_2018.democratic,55.99,%,
+officials.municipal_council.local_2018.conservative,34.47,%,
+officials.municipal_council.local_2018.other,9.5,%,
+officials.municipal_head.local_2022.democratic,27.88,%,
+officials.municipal_head.local_2022.conservative,64.16,%,
+officials.municipal_head.local_2022.other,7.96,%,
+officials.provincial_council.local_2022.democratic,36.72,%,
+officials.provincial_council.local_2022.conservative,61.57,%,
+officials.provincial_council.local_2022.other,1.71,%,
+officials.municipal_council.local_2022.democratic,46.32,%,
+officials.municipal_council.local_2022.conservative,48.03,%,
+officials.municipal_council.local_2022.other,5.65,%,
