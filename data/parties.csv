@@ -1,0 +1,18 @@
+party_id,name_en,name_ko,label,bloc,colour
+dpk,Democratic Party of Korea,더불어민주당,DPK,democratic,#2a78d6
+lkp,Liberty Korea Party,자유한국당,LKP,conservative,#e34948
+ppp,People Power Party,국민의힘,PPP,conservative,#e34948
+bareunmirae,Bareunmirae Party,바른미래당,Bareunmirae,minor,#898781
+justice,Justice Party,정의당,Justice,minor,#898781
+minjung,Minjung Party,민중당,Minjung,minor,#898781
+korean_patriots,Korean Patriots' Party,대한애국당,Korean Patriots,minor,#898781
+green,Green Party Korea,녹색당,Green,minor,#898781
+our_future,Our Future,우리미래,Our Future,minor,#898781
+pro_park,Pro-Park Coalition,친박연대,Pro-Park,minor,#898781
+korea,Korea,코리아,Korea,minor,#898781
+pdp,Party for Democracy and Peace,민주평화당,PDP,minor,#898781
+basic_income,Basic Income Party,기본소득당,Basic Income,minor,#898781
+progressive,Progressive Party,진보당,Progressive,minor,#898781
+unification_korea,Unification Korea Party,통일한국당,Unification Korea,minor,#898781
+independent,Independent,무소속,Independent,independent,#898781
+other,Other parties and independents,기타,Other,other,#898781

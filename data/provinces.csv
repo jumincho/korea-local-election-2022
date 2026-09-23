@@ -1,0 +1,18 @@
+province_code,name_en,name_ko,label
+11,Seoul Special City,서울특별시,Seoul
+26,Busan Metropolitan City,부산광역시,Busan
+27,Daegu Metropolitan City,대구광역시,Daegu
+28,Incheon Metropolitan City,인천광역시,Incheon
+29,Gwangju Metropolitan City,광주광역시,Gwangju
+30,Daejeon Metropolitan City,대전광역시,Daejeon
+31,Ulsan Metropolitan City,울산광역시,Ulsan
+36,Sejong Special Self-Governing City,세종특별자치시,Sejong
+41,Gyeonggi Province,경기도,Gyeonggi
+42,Gangwon Province,강원도,Gangwon
+43,North Chungcheong Province,충청북도,Chungbuk
+44,South Chungcheong Province,충청남도,Chungnam
+45,North Jeolla Province,전라북도,Jeonbuk
+46,South Jeolla Province,전라남도,Jeonnam
+47,North Gyeongsang Province,경상북도,Gyeongbuk
+48,South Gyeongsang Province,경상남도,Gyeongnam
+50,Jeju Special Self-Governing Province,제주특별자치도,Jeju

@@ -58,13 +58,13 @@ jobs:
         run: |
           missing=0
           for f in \
-            "data/07_local_vote_share.csv" \
-            "data/07_local_other_vote_share.csv" \
-            "data/08_local_vote_share.csv" \
-            "data/08_local_other_vote_share.csv" \
-            "data/08_local_male_age_vote_share.csv" \
-            "data/08_local_female_age_vote_share.csv" \
-            "data/20th_presidential_vote_share.csv"; do
+            "data-raw/original/07_local_vote_share.csv" \
+            "data-raw/original/07_local_other_vote_share.csv" \
+            "data-raw/original/08_local_vote_share.csv" \
+            "data-raw/original/08_local_other_vote_share.csv" \
+            "data-raw/original/08_local_male_age_vote_share.csv" \
+            "data-raw/original/08_local_female_age_vote_share.csv" \
+            "data-raw/original/20th_presidential_vote_share.csv"; do
             if [ ! -f "$f" ]; then
               echo "::error::Missing CSV: $f"
               missing=1
