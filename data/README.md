@@ -124,14 +124,13 @@ longitude and latitude with six decimal places. See [Boundaries](#boundaries).
   the governor races and elected officials of the 7th (13 June 2018) and 8th
   (1 June 2022) nationwide local elections, and the 20th presidential election
   (9 March 2022). The pages used and the date of retrieval were not recorded,
-  and the values have not been re-checked against the portal for this version.
+  and the values have not been re-checked against the portal.
 - **Exit poll** (`exit_poll_2022.csv`): party shares by sex and age group,
   compiled by the project author in 2022. The project attributes them to the
   joint election-day exit poll of the three terrestrial broadcasters (KBS, MBC
   and SBS), but the original file names no source and does not say which
   ballot the shares refer to or where the turnout column comes from. None of
-  this could be re-verified for this version, so treat the table as
-  indicative.
+  this could be verified, so treat the table as indicative.
 - **Boundaries**: see [Boundaries](#boundaries).
 
 ## How the files were made
@@ -180,9 +179,9 @@ GRS 80 (central meridian 127.5°E, false easting 1,000,000 m, false northing
 attributes and projection match the province layer that
 [GIS Developer](http://www.gisdeveloper.co.kr/?p=2332) redistributes from the
 Ministry of the Interior and Safety's road-name address map
-([juso.go.kr](https://www.juso.go.kr)). The previous README credited the
-National Spatial Data Infrastructure Portal instead. Neither attribution could
-be confirmed for this version. The boundaries date from before the renamings
+([juso.go.kr](https://www.juso.go.kr)). It has also been credited to the
+National Spatial Data Infrastructure Portal. Neither attribution could be
+confirmed. The boundaries date from before the renamings
 noted under [Caveats](#caveats). Their English names include a typo
 ("Jellanam-do"), so the GeoJSON takes its names from `provinces.csv`.
 

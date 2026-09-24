@@ -29,15 +29,15 @@ checks that every value in the tidy tables equals the corresponding cell here.
   the project attributes to the joint exit poll of the three terrestrial
   broadcasters. The files themselves name no sources, and the values have not
   been re-checked against them. They were first committed on 8 November 2022,
-  as CP949 files with Korean names (commit `056dfc9`). These are the UTF-8
-  copies made in 2026. They match the 2022 files exactly, except that 13 empty
-  trailing rows were dropped from the 2022 governor file.
+  as CP949 files with Korean names (commit `056dfc9`). These are UTF-8 copies
+  that match them exactly, except that 13 empty trailing rows were dropped
+  from the 2022 governor file.
 - **The shapefile** was committed on 8 November 2022 (commit `4f79365`) and
   has not changed since. Where it came from was not recorded. Its name,
   attributes and projection match the province layer of the Ministry of the
   Interior and Safety's road-name address map, as redistributed by GIS
-  Developer. The earlier README credited the National Spatial Data
-  Infrastructure Portal instead. Neither could be confirmed.
+  Developer. It has also been credited to the National Spatial Data
+  Infrastructure Portal. Neither source could be confirmed.
 
 [`data/README.md`](../data/README.md#provenance) has more detail, and the
 problems found in the data.
