@@ -189,7 +189,7 @@ value came through unchanged. The things to know before using the data:
 ├── figures/                   the figures above (PNG, 200 dpi)
 ├── results/key_statistics.csv the numbers quoted above
 ├── tests/                     testthat suite; tests/testthat.R runs it
-├── docs/presentation.pptx     slides from the 2022 project
+├── docs/presentation.pptx     presentation slides
 ├── DESCRIPTION                R dependencies
 ├── Makefile                   make data | figures | test | lint
 └── .github/workflows/ci.yml   lint, test and rebuild on every push
@@ -225,22 +225,6 @@ make data      # rebuild data/ from the original files in data-raw/
 ```
 
 Without `make`, run `Rscript scripts/make_figures.R` and `Rscript tests/testthat.R`.
-
-## Project history
-
-This started in November 2022 as a student data-visualisation project in R.
-The original scripts drew choropleth maps with raster and sp, correlation plots
-with base graphics, 3D pie charts and a bubble chart; this was the
-[original 2022 figure](https://user-images.githubusercontent.com/77545063/200377493-37fb592b-9b97-45d5-aebe-8c1c6c5861a1.png).
-The slides presented with the project are in
-[`docs/presentation.pptx`](docs/presentation.pptx).
-
-In 2026 the repository was rebuilt from scratch: tidy data with provenance and
-tests, boundaries joined by official codes, reusable functions, new figures and
-CI. The pie charts gave way to stacked bars, and the bubble chart to line
-charts. The original data files are kept in [`data-raw/`](data-raw), and the
-2022 scripts remain in the git history; the last commit before the rebuild is
-`3c7d411`.
 
 ## License
 
