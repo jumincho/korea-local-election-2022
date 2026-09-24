@@ -1,3 +1,5 @@
+🇺🇸 **English** | 🇨🇳 [简体中文](README.zh-CN.md) | 🇭🇰 [繁體中文](README.zh-HK.md) | 🇯🇵 [日本語](README.ja.md) | 🇰🇷 [한국어](README.ko.md)
+
 # korea-local-election-2022
 
 Province-level analysis in R of South Korea's 8th local elections (June 2022),
