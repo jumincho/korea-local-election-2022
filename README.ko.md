@@ -200,8 +200,8 @@ Ubuntu 24.04에서는 모든 패키지를 Ubuntu 아카이브에서 설치할 �
 ```sh
 sudo apt-get install -y --no-install-recommends \
   r-base-core r-cran-sf r-cran-ggplot2 r-cran-dplyr r-cran-tidyr r-cran-readr \
-  r-cran-patchwork r-cran-ggrepel r-cran-scales r-cran-testthat r-cran-lintr \
-  r-cran-ragg r-cran-here
+  r-cran-patchwork r-cran-ggrepel r-cran-ragg r-cran-here r-cran-testthat \
+  r-cran-lintr
 ```
 
 다른 환경에서는 CRAN에서 설치합니다(sf에는 GDAL, GEOS, PROJ가 필요하며, CRAN의 macOS

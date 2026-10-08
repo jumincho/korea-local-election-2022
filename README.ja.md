@@ -137,8 +137,8 @@ R 4.1 以降と、[`DESCRIPTION`](DESCRIPTION) に記載されたパッケージ
 ```sh
 sudo apt-get install -y --no-install-recommends \
   r-base-core r-cran-sf r-cran-ggplot2 r-cran-dplyr r-cran-tidyr r-cran-readr \
-  r-cran-patchwork r-cran-ggrepel r-cran-scales r-cran-testthat r-cran-lintr \
-  r-cran-ragg r-cran-here
+  r-cran-patchwork r-cran-ggrepel r-cran-ragg r-cran-here r-cran-testthat \
+  r-cran-lintr
 ```
 
 それ以外の環境では CRAN からインストールしてください（sf には GDAL、GEOS、PROJ が必要ですが、CRAN の macOS 版と Windows 版のビルドにはこれらが含まれています）。

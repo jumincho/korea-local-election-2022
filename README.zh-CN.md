@@ -137,8 +137,8 @@
 ```sh
 sudo apt-get install -y --no-install-recommends \
   r-base-core r-cran-sf r-cran-ggplot2 r-cran-dplyr r-cran-tidyr r-cran-readr \
-  r-cran-patchwork r-cran-ggrepel r-cran-scales r-cran-testthat r-cran-lintr \
-  r-cran-ragg r-cran-here
+  r-cran-patchwork r-cran-ggrepel r-cran-ragg r-cran-here r-cran-testthat \
+  r-cran-lintr
 ```
 
 在其他系统上，请从 CRAN 安装（sf 需要 GDAL、GEOS 和 PROJ；CRAN 的 macOS 和 Windows 二进制包已包含这些库）：
