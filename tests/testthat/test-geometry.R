@@ -1,3 +1,6 @@
+# The simplified boundaries in data/geo/provinces.geojson, which the script
+# data-raw/build_province_geometry.R builds from the original shapefile.
+
 provinces <- read_provinces()
 geo <- read_province_geometry(provinces)
 

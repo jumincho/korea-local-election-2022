@@ -278,11 +278,12 @@ plot_exit_poll <- function(exit_poll, parties, title = NULL, subtitle = NULL, ca
 
 #' Share of each kind of local office won by each bloc, elections compared.
 #'
-#' @param elected_officials The tidy table (one row per party and office).
-plot_elected_officials <- function(elected_officials, offices, elections, parties,
+#' @param officials From [officials_by_bloc()]: one row per election, office
+#'   and bloc.
+plot_elected_officials <- function(officials, offices, elections, parties,
                                    title = NULL, subtitle = NULL, caption = NULL) {
   stack_order <- c("democratic", "other", "conservative")
-  o <- officials_by_bloc(elected_officials, parties)
+  o <- officials
   o$office <- factor(offices$label[match(o$office, offices$office)], levels = offices$label)
   o$year <- election_year(o$election, elections)
   o$year <- factor(o$year, levels = rev(sort(unique(o$year))))

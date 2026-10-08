@@ -119,7 +119,7 @@ figure_exit_poll_2022 <- function(d) {
 #' Figure 7: share of each kind of local office won by each bloc, 2018 and 2022.
 figure_elected_officials <- function(d) {
   plot_elected_officials(
-    d$elected_officials, d$offices, d$elections, d$parties,
+    officials_by_bloc(d$elected_officials, d$parties), d$offices, d$elections, d$parties,
     title = "Share of local offices won, 2018 and 2022",
     subtitle = "Percentage of the officials elected to each kind of office, by party",
     caption = paste(

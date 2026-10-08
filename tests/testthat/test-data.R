@@ -1,3 +1,6 @@
+# Invariants of the tidy data in data/: what each table covers, how its
+# values add up, and the anomalies data/README.md documents.
+
 d <- load_election_data()
 
 race_sums <- function(vote_share) {
