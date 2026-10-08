@@ -7,12 +7,14 @@
 # cell in one of them.
 #
 # Usage, from the repository root:
-#   Rscript data-raw/tidy_election_data.R
+#   Rscript data-raw/tidy_election_data.R        # or: make data
 #
-# Besides the originals it reads the hand-written lookups in the data folder
-# (provinces.csv, parties.csv and offices.csv map Korean names to ids) and
-# writes vote_share.csv, exit_poll_2022.csv and elected_officials_share.csv
-# next to them.
+# Besides the originals it reads the hand-written lookups in data/
+# (provinces.csv, parties.csv and offices.csv map Korean names to ids), with
+# the same validating readers as the analysis, and writes vote_share.csv,
+# exit_poll_2022.csv and elected_officials_share.csv next to them.
+
+source(here::here("R", "data.R"))
 
 RAW_DIR <- file.path("data-raw", "original")
 
@@ -32,19 +34,14 @@ RAW_FILES <- list(
   )
 )
 
-# R stores \u escapes as UTF-8 bytes but leaves them unmarked in C/POSIX
-# locales; mark them so comparisons with the UTF-8 file contents always work.
-utf8 <- function(x) {
-  Encoding(x)[validUTF8(x)] <- "UTF-8"
-  x
-}
-
-# Korean header labels of the originals, written as escapes so that the
-# script itself stays ASCII.
-HEADER_PROVINCE <- utf8("시도") # "sido": province
-HEADER_AGE <- utf8("연령") # "yeollyeong": age group
-HEADER_TURNOUT <- utf8("투표율") # "tupyoyul": turnout
-HEADER_OFFICE <- utf8("선출대상") # "seonchul daesang": office
+# Korean header labels of the originals, written as code points so that the
+# code stays ASCII. intToUtf8() marks its result as UTF-8 in every locale, so
+# the labels compare equal to the file contents even in a C/POSIX locale,
+# where a Korean string literal would be left unmarked.
+HEADER_PROVINCE <- intToUtf8(c(0xc2dc, 0xb3c4)) # 시도: province
+HEADER_AGE <- intToUtf8(c(0xc5f0, 0xb839)) # 연령: age group
+HEADER_TURNOUT <- intToUtf8(c(0xd22c, 0xd45c, 0xc728)) # 투표율: turnout
+HEADER_OFFICE <- intToUtf8(c(0xc120, 0xcd9c, 0xb300, 0xc0c1)) # 선출대상: office
 
 # Read an original wide file and return one row per non-empty cell: the row
 # key (first column), the column header and the numeric value. The header row
@@ -91,18 +88,13 @@ recode_strict <- function(x, from, to, what) {
   to[i]
 }
 
-read_lookup <- function(file) {
-  readr::read_csv(
-    here::here("data", file),
-    col_types = readr::cols(.default = readr::col_character()),
-    locale = readr::locale(encoding = "UTF-8"), progress = FALSE
-  )
-}
-
+# Party id of each Korean party name.
 party_ids <- function(names_ko, lookups) {
   recode_strict(names_ko, lookups$parties$name_ko, lookups$parties$party_id, "party")
 }
 
+# One row per election, province and party; every election must cover all
+# provinces.
 tidy_vote_share <- function(files, lookups) {
   tables <- lapply(names(files), function(election) {
     cells <- read_cells(files[[election]], HEADER_PROVINCE)
@@ -128,6 +120,8 @@ tidy_vote_share <- function(files, lookups) {
   )
 }
 
+# One row per sex, age group and party, with the group's turnout repeated on
+# each row (the originals have it in a column of its own).
 tidy_exit_poll <- function(files, lookups) {
   tables <- lapply(names(files), function(sex) {
     cells <- read_cells(files[[sex]], HEADER_AGE)
@@ -153,6 +147,7 @@ tidy_exit_poll <- function(files, lookups) {
   )
 }
 
+# One row per election, kind of office and party.
 tidy_elected_officials <- function(files, lookups) {
   tables <- lapply(names(files), function(election) {
     cells <- read_cells(files[[election]], HEADER_OFFICE)
@@ -173,6 +168,7 @@ tidy_elected_officials <- function(files, lookups) {
   )
 }
 
+# Write data/<file> as UTF-8 with LF line endings, empty for missing values.
 write_tidy <- function(x, file) {
   path <- here::here("data", file)
   readr::write_csv(x, path, na = "", eol = "\n")
@@ -180,12 +176,11 @@ write_tidy <- function(x, file) {
 }
 
 main <- function() {
-  lookups <- lapply(
-    c(
-      provinces = "provinces.csv", parties = "parties.csv",
-      offices = "offices.csv", elections = "elections.csv"
-    ),
-    read_lookup
+  lookups <- list(
+    provinces = read_provinces(),
+    parties = read_parties(),
+    offices = read_offices(),
+    elections = read_elections()
   )
   write_tidy(tidy_vote_share(RAW_FILES$vote_share, lookups), "vote_share.csv")
   write_tidy(tidy_exit_poll(RAW_FILES$exit_poll, lookups), "exit_poll_2022.csv")

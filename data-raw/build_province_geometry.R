@@ -6,12 +6,12 @@
 # what is known about where it came from.
 #
 # Usage, from the repository root:
-#   Rscript data-raw/build_province_geometry.R
+#   Rscript data-raw/build_province_geometry.R   # or: make data
 #
 # Steps
 #   1. Read the shapefile (attributes are CP949) and check every CTPRVN_CD code
-#      and Korean name against data/provinces.csv. Rows are matched by code,
-#      never by position.
+#      and Korean name against data/provinces.csv, read with the validating
+#      reader in R/data.R. Rows are matched by code, never by position.
 #   2. Clean the coverage. Neighbouring provinces were digitised separately and
 #      their shared borders criss-cross at centimetre scale, leaving thousands
 #      of sliver overlaps and gaps. All boundaries are noded into one planar
@@ -30,6 +30,8 @@
 #      that they are valid and write RFC 7946 GeoJSON; the file is then read
 #      back and checked again.
 
+source(here::here("R", "data.R"))
+
 SHAPEFILE <- file.path("data-raw", "shapefile", "ctp_rvn.shp")
 OUTPUT <- file.path("data", "geo", "provinces.geojson")
 
@@ -39,14 +41,8 @@ DECIMALS <- 6 # output coordinate precision, about 0.1 m (5 creates pinch points
 
 # ---- 1. source --------------------------------------------------------------
 
-read_provinces <- function() {
-  readr::read_csv(
-    here::here("data", "provinces.csv"),
-    col_types = readr::cols(.default = readr::col_character()),
-    locale = readr::locale(encoding = "UTF-8"), progress = FALSE
-  )
-}
-
+# The shapefile's features in the order of `provinces`, after checking that
+# codes and Korean names match one to one.
 read_source <- function(path, provinces) {
   src <- sf::st_read(path, options = "ENCODING=CP949", quiet = TRUE, stringsAsFactors = FALSE)
   i <- match(provinces$province_code, src$CTPRVN_CD)
@@ -144,6 +140,9 @@ grow_labels <- function(owner, members, adjacency) {
   owner
 }
 
+# Steps 2 and 3: node all boundaries, give every sliver face to a province,
+# then drop islands and holes smaller than `min_area`. Returns the cleaned
+# geometry and a report of what was found.
 clean_coverage <- function(geometry, min_area) {
   parts <- polygon_parts(geometry, min_area)
   source_geometry <- do.call(c, lapply(seq_along(geometry), function(k) {
@@ -281,6 +280,7 @@ simplify_arcs <- function(arcs, coords, crs, tolerance, decimals) {
   })
 }
 
+# Coordinates of one ring, concatenated from its (possibly reversed) arcs.
 build_ring <- function(ring_arcs, arcs) {
   pieces <- Map(function(ref, reversed) {
     a <- arcs[[ref]]
@@ -296,6 +296,8 @@ usable_ring <- function(m) {
     abs(sum(m[-n, 1] * m[-1, 2] - m[-1, 1] * m[-n, 2])) > 0
 }
 
+# Rebuild every feature's polygons from the simplified arcs. A ring that
+# collapsed when rounded is dropped; if it is an outer ring, so are its holes.
 assemble_polygons <- function(rings, split, arcs, n_features) {
   ring_xy <- lapply(split$ring_arcs, build_ring, arcs = arcs)
   ok <- vapply(ring_xy, usable_ring, logical(1))
@@ -339,6 +341,7 @@ check_output_geometry <- function(geometry) {
   invisible(geometry)
 }
 
+# Write RFC 7946 GeoJSON with the names from data/provinces.csv.
 write_geojson <- function(geometry, provinces, path, decimals) {
   out <- sf::st_sf(
     province_code = provinces$province_code,
@@ -355,6 +358,7 @@ write_geojson <- function(geometry, provinces, path, decimals) {
   invisible(out)
 }
 
+# Area and vertex count of every province before and after.
 summary_table <- function(source_geometry, output_geometry, provinces) {
   area_km2 <- function(g) as.numeric(sf::st_area(sf::st_transform(g, 5179))) / 1e6
   vertices <- function(g) vapply(g, function(x) nrow(sf::st_coordinates(x)), numeric(1))
