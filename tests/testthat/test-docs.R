@@ -1,6 +1,6 @@
 # Relative links in the READMEs and their translations must point to files that
 # exist, and anchors to headings that exist (using GitHub's rules for heading
-# anchors).
+# anchors). Every README opens with the same language switcher.
 
 read_doc <- function(path) readLines(path, encoding = "UTF-8", warn = FALSE)
 
@@ -44,16 +44,55 @@ broken_links <- function(doc) {
   links[!vapply(links, link_resolves, logical(1), doc_path = path, doc_lines = lines)]
 }
 
-translations <- paste0("README.", c("zh-CN", "zh-HK", "ja", "ko"), ".md")
-docs <- c(
-  "README.md", translations, file.path("data", "README.md"), file.path("data-raw", "README.md")
-)
+# The READMEs in the order of the language switcher.
+readmes <- c("README.md", "README.ko.md", "README.zh-CN.md", "README.zh-HK.md", "README.ja.md")
+docs <- c(readmes, file.path("data", "README.md"), file.path("data-raw", "README.md"))
+
+# The items of a language switcher line such as
+# "<flag> **English** | <flag> [한국어](README.ko.md) | ...": the flag, the
+# language name, whether it is the bold (current) one, and the link target.
+# Items that do not have either form get NA throughout.
+switcher_items <- function(line) {
+  items <- strsplit(line, " | ", fixed = TRUE)[[1]]
+  pattern <- "^(\\S+) (?:\\*\\*([^*]+)\\*\\*|\\[([^]]+)\\]\\(([^)]+)\\))$"
+  parts <- regmatches(items, regexec(pattern, items, perl = TRUE))
+  part <- function(i) vapply(parts, function(p) p[i], character(1))
+  bold <- nzchar(part(3), keepNA = TRUE)
+  data.frame(
+    flag = part(2),
+    name = ifelse(bold, part(3), part(4)),
+    bold = bold,
+    target = part(5)
+  )
+}
 
 test_that("relative links and anchors in the READMEs resolve", {
   for (doc in docs) {
     expect_gt(length(relative_links(read_doc(here::here(doc)))), 3)
     expect_identical(broken_links(doc), character(), info = doc)
   }
+})
+
+test_that("every README opens with the switcher: fixed order, own language in bold", {
+  switchers <- lapply(readmes, function(doc) switcher_items(read_doc(here::here(doc))[1]))
+  labels <- paste(switchers[[1]]$flag, switchers[[1]]$name)
+  expect_identical(switchers[[1]]$name[1], "English")
+  for (i in seq_along(readmes)) {
+    s <- switchers[[i]]
+    expect_identical(nrow(s), length(readmes), info = readmes[i])
+    expect_false(anyNA(s$name), info = readmes[i])
+    expect_identical(paste(s$flag, s$name), labels, info = readmes[i])
+    expect_identical(which(s$bold), i, info = readmes[i])
+    expect_identical(s$target, replace(readmes, i, ""), info = readmes[i])
+    expect_true(all(file.exists(here::here(s$target[-i]))), info = readmes[i])
+  }
+})
+
+test_that("switcher_items parses links and bold names, and flags anything else", {
+  s <- switcher_items("A **One** | B [Two](two.md) | C three")
+  expect_identical(s$name, c("One", "Two", NA))
+  expect_identical(s$bold, c(TRUE, FALSE, NA))
+  expect_identical(s$target, c("", "two.md", NA))
 })
 
 test_that("the link checker notices broken links", {
