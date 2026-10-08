@@ -30,15 +30,15 @@ checks that every value in the tidy tables equals the corresponding cell here.
   the project attributes to the joint exit poll of the three terrestrial
   broadcasters. The files themselves name no sources, and the values have not
   been re-checked against them. They were first committed on 8 November 2022,
-  as CP949 files with Korean names (commit `492f5e5`). These are UTF-8 copies
-  that match them exactly, except that 13 empty trailing rows were dropped
-  from the 2022 governor file.
-- **The shapefile** was committed on 8 November 2022 (commit `acdb9f6`) and
-  has not changed since. Where it came from was not recorded. Its name,
-  attributes and projection match the province layer of the Ministry of the
-  Interior and Safety's road-name address map, as redistributed by GIS
-  Developer. It has also been credited to the National Spatial Data
-  Infrastructure Portal. Neither source could be confirmed.
+  as CP949 files with Korean names, in the commit "데이터셋 (.csv)". These are
+  UTF-8 copies that match them exactly, except that 13 empty trailing rows
+  were dropped from the 2022 governor file.
+- **The shapefile** was committed on 8 November 2022, in the commit
+  "지도 데이터", and has not changed since. Where it came from was not
+  recorded. Its name, attributes and projection match the province layer of
+  the Ministry of the Interior and Safety's road-name address map, as
+  redistributed by GIS Developer. It has also been credited to the National
+  Spatial Data Infrastructure Portal. Neither source could be confirmed.
 
 [`data/README.md`](../data/README.md#provenance) has more detail, and the
 problems found in the data.

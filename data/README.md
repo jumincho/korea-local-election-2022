@@ -162,7 +162,7 @@ into the tables here; see [`data-raw/README.md`](../data-raw/README.md).
   result differs from the committed files.
 
 The CSVs are UTF-8 copies of the CP949-encoded files first uploaded on
-8 November 2022 (commit `492f5e5`, folder `datasets (preprocessed)`).
+8 November 2022 (the commit "데이터셋 (.csv)", folder `datasets (preprocessed)`).
 Converting those with `iconv -f CP949 -t UTF-8` and removing carriage returns
 reproduces the copies exactly. The one other difference is that 13 empty
 trailing rows in the 2022 governor file were dropped.
@@ -170,7 +170,7 @@ trailing rows in the 2022 governor file were dropped.
 ## Boundaries
 
 **Source.** [`data-raw/shapefile/ctp_rvn.*`](../data-raw/shapefile), byte for
-byte the file committed on 8 November 2022 (commit `acdb9f6`). It is 13 MB,
+byte the file committed on 8 November 2022 (the commit "지도 데이터"). It is 13 MB,
 with 17 features and about 810,000 vertices. The attributes are `CTPRVN_CD`,
 `CTP_ENG_NM` and `CTP_KOR_NM`, encoded in CP949. The projection,
 "PCS_ITRF2000_TM", is a transverse Mercator on GRS 80 (central meridian
