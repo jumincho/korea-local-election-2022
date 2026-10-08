@@ -22,7 +22,7 @@ six metropolitan cities, Sejong and nine provinces):
 - how each main party's share changed from the 7th local elections in 2018;
 - how closely the governor vote followed the presidential vote;
 - exit-poll vote share by sex and age group;
-- the party mix of the officials elected to municipal and council offices.
+- the party mix of the municipal heads and local councillors elected.
 
 The data are tidy, documented tables with tests that tie them to the original
 2022 files. The R code regenerates every figure and every number in this README.
@@ -42,12 +42,12 @@ every push. Provinces count equally, whatever their population.
   The widest leads were the DPK's 64.23 points in North Jeolla and the PPP's
   60.78 points in Daegu. ([Figure 2](#2-margins-in-2022))
 - **Change since 2018.** The DPK's share of the governor vote fell in 15 of the
-  17 provinces, by a median of 13.11 points; the largest fall was 24.14 points,
-  in Sejong. It rose in North Jeolla and Jeju. The main conservative party's
-  share (LKP in 2018, PPP in 2022) rose in all 15 provinces where it had a
-  candidate both times: by 13.40 points in Gyeonggi at the least, and by 36.22
-  in Jeju at the most, where an independent had won in 2018.
-  ([Figure 3](#3-change-since-2018))
+  17 provinces, by up to 24.14 points (in Sejong), and rose in North Jeolla and
+  Jeju; across all 17 provinces the median change was a fall of 13.11 points.
+  The main conservative party's share (LKP in 2018, PPP in 2022) rose in all 15
+  provinces where it had a candidate both times: by 13.40 points in Gyeonggi at
+  the least, and by 36.22 in Jeju at the most, where an independent had won in
+  2018. ([Figure 3](#3-change-since-2018))
 - **Presidential and governor votes.** Across provinces, each party's June 2022
   governor share closely followed its March 2022 presidential share: Pearson's
   r = 0.97 for the DPK (95% CI 0.93 to 0.99) and 0.98 for the PPP (0.96 to
@@ -71,8 +71,9 @@ every push. Provinces count equally, whatever their population.
 
 ## Figures
 
-All figures are written to [`figures/`](figures) by
-[`scripts/make_figures.R`](scripts/make_figures.R).
+Each figure is drawn by its own function in [`R/figures.R`](R/figures.R), and
+[`scripts/make_figures.R`](scripts/make_figures.R) writes them all to
+[`figures/`](figures).
 
 ### 1. Winners by province
 
@@ -179,15 +180,16 @@ value came through unchanged. The things to know before using the data:
 ├── R/                         functions, sourced by the scripts and the tests
 │   ├── data.R                 read and validate the tidy data
 │   ├── analysis.R             winners, margins, change, correlations
-│   ├── summary.R              the key statistics quoted in this README
-│   ├── theme.R                colours, ggplot2 theme, PNG output
-│   └── plots.R                one function per figure
+│   ├── key_statistics.R       the numbers quoted in this README
+│   ├── figures.R              one function per figure
+│   ├── plots.R                chart builders used by the figures
+│   └── theme.R                colours, number formats, ggplot2 theme, PNG output
 ├── data/                      tidy data; see data/README.md
 │   └── geo/provinces.geojson  simplified boundaries
 ├── data-raw/                  original inputs and the scripts that build data/
 │   ├── original/              the 2022 CSV files, unchanged
 │   └── shapefile/             the province boundary file, unchanged
-├── scripts/make_figures.R     regenerates figures/ and results/
+├── scripts/make_figures.R     writes figures/ and results/
 ├── figures/                   the figures above (PNG, 200 dpi)
 ├── results/key_statistics.csv the numbers quoted above
 ├── tests/                     testthat suite; tests/testthat.R runs it
@@ -226,7 +228,11 @@ make lint      # lintr, with the settings in .lintr
 make data      # rebuild data/ from the original files in data-raw/
 ```
 
-Without `make`, run `Rscript scripts/make_figures.R` and `Rscript tests/testthat.R`.
+CI runs all four on every push and fails if `make data` or `make figures`
+changes anything in `data/` or `results/`. Figures rendered on another system
+can look slightly different from the committed PNG files, depending on the
+fonts installed. Without `make`, run `Rscript scripts/make_figures.R` and
+`Rscript tests/testthat.R`.
 
 ## License
 

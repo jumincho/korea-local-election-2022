@@ -37,8 +37,8 @@ scripts in [`data-raw/`](../data-raw); see
 |---|---|
 | `province_code` | Two-digit administrative code of the province (`CTPRVN_CD` in the boundary file), e.g. `11` Seoul, `50` Jeju. The key that joins every table to the boundaries. |
 | `name_en` | Official English name in 2022, e.g. `North Chungcheong Province` |
-| `name_ko` | Official Korean name in 2022, exactly as in the original files |
-| `label` | Short English label used in figures |
+| `name_ko` | Official Korean name in 2022, exactly as in the original files; unique, as the build script matches them on it |
+| `label` | Short English label used in figures; unique |
 
 The short labels are the usual romanised short forms: Chungbuk and Chungnam
 for North and South Chungcheong, Jeonbuk and Jeonnam for North and South
@@ -50,10 +50,10 @@ Jeolla, Gyeongbuk and Gyeongnam for North and South Gyeongsang.
 |---|---|
 | `party_id` | Identifier used in the other tables |
 | `name_en` | The party's usual English name; a literal rendering where it has none (`Korea`, `Unification Korea Party`) |
-| `name_ko` | Korean name exactly as in the original files |
+| `name_ko` | Korean name exactly as in the original files; unique, as the build script matches them on it |
 | `label` | Short label used in figures |
 | `bloc` | `democratic` (Democratic Party of Korea), `conservative` (Liberty Korea Party in 2018, People Power Party in 2022), `minor` (every other party), `independent` or `other` (the combined "other" of `elected_officials_share.csv`) |
-| `colour` | Display colour in figures |
+| `colour` | Display colour in figures; the same for every party of a bloc |
 
 `bloc` is a lineage grouping that lets the two main parties be compared across
 elections. It is not an ideological classification of the minor parties.
@@ -73,7 +73,7 @@ elections. It is not an ideological classification of the minor parties.
 | Column | Description |
 |---|---|
 | `office` | `municipal_head`, `provincial_council` or `municipal_council` |
-| `name_en`, `name_ko` | Name of the office |
+| `name_en`, `name_ko` | Name of the office; `name_ko` exactly as in the original files, and unique |
 | `label` | Short label used in figures |
 
 ### `vote_share.csv`
@@ -149,8 +149,9 @@ into the tables here; see [`data-raw/README.md`](../data-raw/README.md).
 | `shapefile/ctp_rvn.{shp,shx,dbf,prj}` | `geo/provinces.geojson` |
 
 - [`data-raw/tidy_election_data.R`](../data-raw/tidy_election_data.R) builds
-  the three tidy tables. It maps Korean names to ids with the lookups, drops
-  blank cells, and fails on anything it cannot match. It changes no values.
+  the three tidy tables. It reads the lookups with the validating readers in
+  [`R/data.R`](../R/data.R), maps Korean names to ids with them, drops blank
+  cells, and fails on anything it cannot match. It changes no values.
 - [`data-raw/build_province_geometry.R`](../data-raw/build_province_geometry.R)
   builds the GeoJSON (see [Boundaries](#boundaries)).
 - [`tests/testthat/test-raw-equivalence.R`](../tests/testthat/test-raw-equivalence.R)
@@ -161,7 +162,7 @@ into the tables here; see [`data-raw/README.md`](../data-raw/README.md).
   result differs from the committed files.
 
 The CSVs are UTF-8 copies of the CP949-encoded files first uploaded on
-8 November 2022 (commit `056dfc9`, folder `datasets (preprocessed)`).
+8 November 2022 (commit `492f5e5`, folder `datasets (preprocessed)`).
 Converting those with `iconv -f CP949 -t UTF-8` and removing carriage returns
 reproduces the copies exactly. The one other difference is that 13 empty
 trailing rows in the 2022 governor file were dropped.
@@ -169,11 +170,12 @@ trailing rows in the 2022 governor file were dropped.
 ## Boundaries
 
 **Source.** [`data-raw/shapefile/ctp_rvn.*`](../data-raw/shapefile), byte for
-byte the file committed on 8 November 2022 (commit `4f79365`). It is 13 MB,
-with 17 features and about 810,000 vertices. The attributes are `CTPRVN_CD`, `CTP_ENG_NM` and `CTP_KOR_NM`, encoded
-in CP949. The projection, "PCS_ITRF2000_TM", is a transverse Mercator on
-GRS 80 (central meridian 127.5°E, false easting 1,000,000 m, false northing
-2,000,000 m, scale 0.9996), the same grid as EPSG:5179 (Korea 2000 / Unified CS).
+byte the file committed on 8 November 2022 (commit `acdb9f6`). It is 13 MB,
+with 17 features and about 810,000 vertices. The attributes are `CTPRVN_CD`,
+`CTP_ENG_NM` and `CTP_KOR_NM`, encoded in CP949. The projection,
+"PCS_ITRF2000_TM", is a transverse Mercator on GRS 80 (central meridian
+127.5°E, false easting 1,000,000 m, false northing 2,000,000 m, scale 0.9996),
+the same grid as EPSG:5179 (Korea 2000 / Unified CS).
 
 **Origin.** Where the file came from was not recorded in 2022. Its name,
 attributes and projection match the province layer that
@@ -181,9 +183,9 @@ attributes and projection match the province layer that
 Ministry of the Interior and Safety's road-name address map
 ([juso.go.kr](https://www.juso.go.kr)). It has also been credited to the
 National Spatial Data Infrastructure Portal. Neither attribution could be
-confirmed. The boundaries date from before the renamings
-noted under [Caveats](#caveats). Their English names include a typo
-("Jellanam-do"), so the GeoJSON takes its names from `provinces.csv`.
+confirmed. The boundaries date from before the renamings noted under
+[Caveats](#caveats). Their English names include a typo ("Jellanam-do"), so
+the GeoJSON takes its names from `provinces.csv`.
 
 **Processing** (`data-raw/build_province_geometry.R`):
 
@@ -212,7 +214,7 @@ noted under [Caveats](#caveats). Their English names include a typo
 
 The result has about 21,000 vertices and takes 564 KiB. The total area is
 100,065 km², against 100,058 km² in the source, and no province changes by more
-than 0.4 %. The tests in
+than 0.4%. The tests in
 [`tests/testthat/test-geometry.R`](../tests/testthat/test-geometry.R) repeat
 these checks, and check the join with the vote data.
 
@@ -236,7 +238,7 @@ these checks, and check the join with the vote data.
    - The 2018 municipal councillors add up to 99.96 in
      `elected_officials_share.csv`.
 3. **Exit-poll turnout.** Turnout is the same for the 60s and 70s groups within
-   each sex (73.9 % for men, 62.9 % for women). That suggests a single figure
+   each sex (73.9% for men, 62.9% for women). That suggests a single figure
    for everyone aged 60 and over was copied into both rows. It is kept as
    recorded, and figure 6 marks the repeated values.
 4. **Exit-poll age groups** are labelled 20 to 70 in the original file. Exit
@@ -252,12 +254,12 @@ these checks, and check the join with the vote data.
    governor in Gwangju or South Jeolla in 2018, so there is no 2018
    conservative share for those two provinces; a swing there is missing, not a
    rise from zero. Jeju's 2018 race was won by an independent
-   (51.72 %), with the LKP on 3.26 %, so Jeju's LKP-to-PPP change is not
+   (51.72%), with the LKP on 3.26%, so Jeju's LKP-to-PPP change is not
    like-for-like.
 7. **Elected officials** are shares of seats won, not of votes; "other" combines
    minor parties and independents, as in the source. For municipal heads the
    shares match whole numbers of the 226 posts exactly: in 2022, for example,
-   64.16 % is 145 of 226. The council totals are not in the file, so council
+   64.16% is 145 of 226. The council totals are not in the file, so council
    seat counts cannot be reconstructed.
 8. **Names as of 2022.** Gangwon Province became Gangwon State in June 2023 and
    North Jeolla Province became Jeonbuk State in January 2024. Newer datasets

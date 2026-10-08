@@ -41,8 +41,8 @@
   격차가 가장 컸던 곳은 민주당이 64.23%p 앞선 전라북도와 국민의힘이 60.78%p 앞선
   대구광역시였습니다. ([그림 2](#2-2022년-득표율-격차))
 - **2018년 대비 변화**: 민주당의 광역자치단체장 선거 득표율은 17개 시도 중 15곳에서
-  떨어졌고, 중앙값으로 보면 13.11%p 하락했습니다. 가장 크게 떨어진 곳은
-  세종특별자치시로, 24.14%p 하락했습니다. 전라북도와 제주특별자치도에서는 올랐습니다.
+  떨어졌고, 하락 폭은 세종특별자치시가 24.14%p로 가장 컸습니다. 오른 곳은 전라북도와
+  제주특별자치도였으며, 17개 시도 전체의 변화를 중앙값으로 보면 13.11%p 하락했습니다.
   주요 보수 정당(2018년 자유한국당, 2022년 국민의힘)의 득표율은 두 선거에 모두 후보를
   낸 15개 시도 전부에서 올랐습니다. 상승 폭은 경기도가 13.40%p로 가장 작았고, 2018년에
   무소속 후보가 이겼던 제주특별자치도가 36.22%p로 가장 컸습니다.
@@ -70,7 +70,8 @@
 
 ## 그림
 
-모든 그림은 [`scripts/make_figures.R`](scripts/make_figures.R)이
+그림마다 [`R/figures.R`](R/figures.R)에 전용 함수가 하나씩 있으며,
+[`scripts/make_figures.R`](scripts/make_figures.R)이 모든 그림을
 [`figures/`](figures)에 저장합니다.
 
 ### 1. 시도별 당선 정당
@@ -154,7 +155,7 @@ y = x 직선, 최소제곱 회귀선, 피어슨 r과 함께 나타냅니다.
   치지 않습니다.
 - **상관계수**는 시도 단위로 계산한 피어슨 r이며, 95% 신뢰구간은 `cor.test()`로,
   최소제곱 회귀선은 `lm()`으로 구합니다. 각 시도는 인구와 관계없이 한 번씩만 셉니다.
-  점이 17개(보수 정당의 2018-2022 비교에서는 15개)뿐이라 신뢰구간이 넓습니다.
+  점이 17개(보수 정당의 2018년과 2022년 비교에서는 15개)뿐이라 신뢰구간이 넓습니다.
   상관계수는 득표의 지리적 분포를 설명할 뿐, 개인이 어떻게 투표했는지를 보여 주지는
   않습니다.
 - **경계**: 원자료에서는 이웃한 시도의 경계선이 서로 맞지 않습니다. 이를 올바른
@@ -174,15 +175,16 @@ y = x 직선, 최소제곱 회귀선, 피어슨 r과 함께 나타냅니다.
 ├── R/                         함수(스크립트와 테스트가 source로 불러옴)
 │   ├── data.R                 tidy 데이터 읽기와 검증
 │   ├── analysis.R             당선자, 격차, 변화, 상관계수
-│   ├── summary.R              이 README에 인용한 주요 통계
-│   ├── theme.R                색상, ggplot2 테마, PNG 출력
-│   └── plots.R                그림마다 함수 하나
+│   ├── key_statistics.R       이 README에 인용한 수치
+│   ├── figures.R              그림마다 함수 하나
+│   ├── plots.R                그림에 쓰는 차트 생성 함수
+│   └── theme.R                색상, 숫자 형식, ggplot2 테마, PNG 출력
 ├── data/                      tidy 데이터(data/README.md 참고)
 │   └── geo/provinces.geojson  단순화한 경계
 ├── data-raw/                  원본 입력 자료와 data/를 만드는 스크립트
 │   ├── original/              2022년 CSV 파일(변경 없음)
 │   └── shapefile/             시도 경계 파일(변경 없음)
-├── scripts/make_figures.R     figures/와 results/를 다시 생성
+├── scripts/make_figures.R     figures/와 results/를 생성
 ├── figures/                   위의 그림(PNG, 200 dpi)
 ├── results/key_statistics.csv 위에서 인용한 수치
 ├── tests/                     testthat 테스트 스위트(tests/testthat.R로 실행)
@@ -220,7 +222,10 @@ make lint      # lintr(.lintr의 설정 사용)
 make data      # data-raw/의 원본 파일로 data/를 다시 생성
 ```
 
-`make`를 쓰지 않을 때는 `Rscript scripts/make_figures.R`과 `Rscript tests/testthat.R`을
+CI는 푸시할 때마다 이 네 가지를 모두 실행하며, `make data`나 `make figures`가
+`data/` 또는 `results/`의 내용을 조금이라도 바꾸면 실패합니다. 다른 시스템에서 그린
+그림은 설치된 글꼴에 따라 커밋된 PNG 파일과 조금 다르게 보일 수 있습니다. `make`를
+쓰지 않을 때는 `Rscript scripts/make_figures.R`과 `Rscript tests/testthat.R`을
 실행합니다.
 
 ## 라이선스
