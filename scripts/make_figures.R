@@ -127,8 +127,7 @@ for (name in names(figures)) {
 }
 
 stats <- key_statistics(d)
-dir.create(file.path(root, "results"), showWarnings = FALSE)
-readr::write_csv(stats, file.path(root, "results", "key_statistics.csv"), na = "", eol = "\n")
+write_key_statistics(stats)
 message("wrote results/key_statistics.csv")
 
 cat("\nKey statistics (results/key_statistics.csv)\n")

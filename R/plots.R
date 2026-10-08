@@ -2,10 +2,6 @@
 # ggplot or patchwork object; scripts/make_figures.R saves them. Captions that
 # quote numbers receive them from the caller, which computes them from data.
 
-province_labels <- function(codes, provinces) {
-  provinces$label[match(codes, provinces$province_code)]
-}
-
 percent_axis <- function(x) paste0(x, "%")
 
 # Margins get two decimals when they are below one point, so that close races

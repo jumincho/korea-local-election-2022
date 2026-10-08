@@ -132,6 +132,24 @@ read_offices <- function(path = data_path("offices.csv")) {
   x
 }
 
+#' Short English label of each province code, e.g. "Jeonbuk" for "45".
+province_labels <- function(codes, provinces) {
+  i <- match(codes, provinces$province_code)
+  if (anyNA(i)) {
+    stop("Unknown province_code: ", paste(codes[is.na(i)], collapse = ", "), call. = FALSE)
+  }
+  provinces$label[i]
+}
+
+#' Year of each election, e.g. "2022" for "local_2022".
+election_year <- function(ids, elections) {
+  i <- match(ids, elections$election)
+  if (anyNA(i)) {
+    stop("Unknown election: ", paste(ids[is.na(i)], collapse = ", "), call. = FALSE)
+  }
+  format(elections$date[i], "%Y")
+}
+
 # ---- results ----------------------------------------------------------------
 
 #' Vote share of every candidate's party, by election and province.

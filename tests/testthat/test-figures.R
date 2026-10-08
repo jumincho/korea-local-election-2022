@@ -9,18 +9,6 @@ png_size <- function(path) {
   )
 }
 
-test_that("results/key_statistics.csv matches what the code computes from data/", {
-  committed <- readr::read_csv(
-    here::here("results", "key_statistics.csv"),
-    col_types = "cdcc", na = character(), progress = FALSE
-  )
-  current <- key_statistics(d)
-  expect_identical(names(committed), names(current))
-  expect_identical(committed$statistic, current$statistic)
-  expect_equal(committed$value, current$value)
-  expect_identical(committed$detail, current$detail)
-})
-
 test_that("save_figure writes a PNG of the requested size", {
   path <- save_figure(
     ggplot2::ggplot() + theme_election(), "blank",

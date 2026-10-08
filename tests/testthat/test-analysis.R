@@ -54,6 +54,19 @@ test_that("paired_shares lines up two elections by province, NA where a bloc was
   expect_identical(p$province_code, c("01", "02"))
   expect_equal(p$x, c(40, NA))
   expect_equal(p$y, c(NA, 70))
+  both <- paired_shares(toy_votes, toy_parties, toy_provinces, "e1", "e2")
+  expect_identical(both$bloc, rep(MAIN_BLOCS, each = 2))
+  expect_equal(both$x[both$bloc == "democratic"], c(50, 100))
+})
+
+test_that("unknown elections and blocs are errors, not columns of NA", {
+  expect_error(
+    paired_shares(toy_votes, toy_parties, toy_provinces, "e1", "e3"), "Unknown election: e3"
+  )
+  expect_error(
+    bloc_margin(toy_votes, toy_parties, toy_provinces, "e2", lead = "liberal"),
+    "Unknown bloc: liberal"
+  )
 })
 
 test_that("bloc_swing is the change in share and NA, not a swing, without a candidate", {
@@ -80,6 +93,20 @@ test_that("correlation_summary agrees with cor.test() and lm(), dropping incompl
   line <- correlation_summary(1:10, 3 + 2 * (1:10))
   expect_equal(c(line$r, line$slope, line$intercept), c(1, 2, 3))
   expect_error(correlation_summary(1:3, 1:3), "at least four")
+})
+
+test_that("bloc_correlations summarises each bloc's pairs separately", {
+  pairs <- dplyr::tibble(
+    province_code = rep(c("01", "02", "03", "04", "05"), 2),
+    bloc = rep(c("democratic", "conservative"), each = 5),
+    x = c(1, 2, 3, 4, 5, 10, 20, 30, 40, NA),
+    y = c(2, 4, 6, 8, 10, 40, 30, 20, 10, 0)
+  )
+  s <- bloc_correlations(pairs)
+  expect_identical(s$bloc, c("democratic", "conservative"))
+  expect_equal(s$r, c(1, -1))
+  expect_equal(s$n, c(5L, 4L))
+  expect_equal(s$mean_difference_pp, c(3, 0))
 })
 
 test_that("exit_poll_gap is one party's lead in each sex and age group", {
