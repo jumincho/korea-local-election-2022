@@ -1,23 +1,19 @@
-# Visual system shared by every figure: chart chrome, party colours, a ggplot2
-# theme and a PNG writer.
+# Visual system shared by every figure: chart colours, party colours and
+# names, number formats, ggplot2 themes and a PNG writer.
 #
 # Party colours come from data/parties.csv: DPK blue and LKP/PPP red are
 # recognisable party colours that also stay distinct under protanopia and
 # deuteranopia (checked with a CVD simulation, OKLab distance 21.6); every
 # other party, independents and "other" share one neutral grey.
 
-# R leaves \u escapes unmarked in C/POSIX locales, where they would then render
-# as garbage; marking them as UTF-8 makes the figures independent of the locale.
-as_utf8 <- function(x) {
-  Encoding(x)[validUTF8(x)] <- "UTF-8"
-  x
-}
-
+# Typographic characters. intToUtf8() marks its result as UTF-8 in every
+# locale, whereas a "−" literal is left unmarked in a C/POSIX locale and
+# would then render as garbage.
 GLYPH <- list(
-  minus = as_utf8("\u2212"),
-  dot = as_utf8("\u00b7"),
-  left = as_utf8("\u2190"),
-  right = as_utf8("\u2192")
+  minus = intToUtf8(0x2212),
+  dot = intToUtf8(0x00b7),
+  left = intToUtf8(0x2190),
+  right = intToUtf8(0x2192)
 )
 
 CHART <- list(
@@ -27,7 +23,8 @@ CHART <- list(
   ink_muted = "#898781",
   grid = "#e1e0d9",
   axis = "#c3c2b7",
-  neutral = "#f0efec"
+  neutral = "#f0efec",
+  on_fill = "#ffffff"
 )
 
 #' Display colour of each bloc, taken from data/parties.csv.
@@ -58,6 +55,15 @@ format_pp <- function(x, digits = 1) {
   sign <- ifelse(x > 0, "+", ifelse(x < 0, GLYPH$minus, ""))
   ifelse(is.na(x), NA_character_, paste0(sign, out))
 }
+
+#' Margins below one point get two decimals, so that a close race is not
+#' rounded to zero.
+format_margin <- function(x) {
+  ifelse(abs(x) < 1, format_pp(x, 2), format_pp(x, 1))
+}
+
+#' Axis labels on a 0 to 100 percentage scale: 20 becomes "20%".
+percent_label <- function(x) paste0(x, "%")
 
 #' Base theme: recessive hairline grid, muted axes, left-aligned titles.
 theme_election <- function(base_size = 11) {
@@ -103,7 +109,18 @@ theme_election_map <- function(base_size = 11) {
     )
 }
 
-#' Write a figure to figures/<name>.png with ragg (no system graphics needed).
+#' Projection and theme for maps: Korea 2000 / Unified CS (EPSG:5179), the
+#' national grid, without graticules.
+map_layers <- function() {
+  list(
+    ggplot2::coord_sf(crs = sf::st_crs(5179), datum = NA),
+    theme_election_map()
+  )
+}
+
+#' Write a figure to <dir>/<name>.png with ragg (no system graphics needed).
+#'
+#' @return The path written, invisibly.
 save_figure <- function(plot, name, width, height, dpi = 200, dir = here::here("figures")) {
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)
   path <- file.path(dir, paste0(name, ".png"))

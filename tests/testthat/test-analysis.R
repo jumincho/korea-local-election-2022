@@ -2,9 +2,7 @@
 
 toy_parties <- dplyr::tibble(
   party_id = c("a", "b", "c", "d"),
-  label = c("A", "B", "C", "D"),
-  bloc = c("democratic", "conservative", "conservative", "minor"),
-  colour = c("#2a78d6", "#e34948", "#e34948", "#898781")
+  bloc = c("democratic", "conservative", "conservative", "minor")
 )
 toy_provinces <- dplyr::tibble(province_code = c("01", "02"), label = c("One", "Two"))
 toy_votes <- dplyr::tibble(
@@ -129,18 +127,4 @@ test_that("officials_by_bloc sums party shares within each bloc", {
   o <- officials_by_bloc(officials, toy_parties)
   expect_equal(o$share_pct[o$bloc == "conservative"], 50)
   expect_equal(sum(o$share_pct), 100)
-})
-
-test_that("format_pp writes an explicit sign and a true minus", {
-  expect_identical(
-    format_pp(c(1.234, -2, 0, NA)),
-    c("+1.2", paste0(GLYPH$minus, "2.0"), "0.0", NA)
-  )
-  expect_identical(format_margin(c(-0.15, 12.34)), c(paste0(GLYPH$minus, "0.15"), "+12.3"))
-})
-
-test_that("bloc_colours needs exactly one colour per bloc", {
-  expect_identical(bloc_colours(toy_parties)[["conservative"]], "#e34948")
-  toy_parties$colour[3] <- "#000000"
-  expect_error(bloc_colours(toy_parties), "exactly one colour")
 })

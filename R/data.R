@@ -217,7 +217,8 @@ read_province_geometry <- function(provinces = read_provinces(),
 #' Load and validate every table.
 #'
 #' @return A named list: `provinces`, `parties`, `elections`, `offices`,
-#'   `vote_share`, `exit_poll`, `elected_officials` and `geometry`.
+#'   `vote_share`, `exit_poll`, `elected_officials` and `geometry`. The
+#'   figure functions and key_statistics() take it as their argument `d`.
 load_election_data <- function() {
   provinces <- read_provinces()
   parties <- read_parties()

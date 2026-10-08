@@ -1,39 +1,31 @@
-# Figure builders. Each takes tidy tables (and analysis results) and returns a
-# ggplot or patchwork object; scripts/make_figures.R saves them. Captions that
-# quote numbers receive them from the caller, which computes them from data.
-
-percent_axis <- function(x) paste0(x, "%")
-
-# Margins get two decimals when they are below one point, so that close races
-# are not rounded to zero.
-format_margin <- function(x) {
-  ifelse(abs(x) < 1, format_pp(x, 2), format_pp(x, 1))
-}
-
-map_layers <- function() {
-  list(
-    ggplot2::coord_sf(crs = sf::st_crs(5179), datum = NA),
-    theme_election_map()
-  )
-}
+# Chart builders. Each takes tidy tables and analysis results and returns a
+# ggplot or patchwork object. The words around a chart (title, subtitle and
+# caption) come from the caller, the figure functions in R/figures.R; a
+# builder writes only the text inside the chart: axis titles, legends and
+# labels.
 
 #' Winner of every governor race, one map per election.
+#'
+#' @param winners From [province_winners()].
+#' @param races The elections to map, one panel each, in panel order.
 plot_winner_maps <- function(geometry, winners, parties, elections,
-                             races = c("local_2018", "local_2022"), caption = NULL) {
+                             races = c("local_2018", "local_2022"),
+                             title = NULL, subtitle = NULL, caption = NULL) {
   w <- winners[winners$election %in% races, ]
   w$bloc <- parties$bloc[match(w$winner, parties$party_id)]
   counts <- count_winners(w)
   counts$party <- parties$label[match(counts$winner, parties$party_id)]
+  # Panel titles such as "2022: PPP 12 · DPK 5".
   panel <- vapply(races, function(id) {
     n <- counts[counts$election == id, ]
     sprintf(
-      "%s: %s", format(elections$date[elections$election == id], "%Y"),
+      "%s: %s", election_year(id, elections),
       paste(n$party, n$races, collapse = paste0(" ", GLYPH$dot, " "))
     )
   }, character(1))
   map <- dplyr::inner_join(geometry, w, by = "province_code")
   map$panel <- factor(panel[map$election], levels = panel)
-  blocs <- intersect(c("democratic", "conservative", "independent"), map$bloc)
+  blocs <- intersect(names(bloc_labels(parties)), map$bloc)
 
   ggplot2::ggplot(map) +
     ggplot2::geom_sf(ggplot2::aes(fill = .data$bloc), colour = CHART$surface, linewidth = 0.25) +
@@ -41,21 +33,22 @@ plot_winner_maps <- function(geometry, winners, parties, elections,
     ggplot2::scale_fill_manual(
       values = bloc_colours(parties)[blocs], labels = bloc_labels(parties)[blocs], breaks = blocs
     ) +
-    ggplot2::labs(
-      title = "Winning party in each metropolitan mayor and governor race",
-      subtitle = "7th (2018) and 8th (2022) local elections; counts are races won",
-      caption = caption
-    ) +
+    ggplot2::labs(title = title, subtitle = subtitle, caption = caption) +
     map_layers() +
     ggplot2::theme(strip.text = ggplot2::element_text(size = ggplot2::rel(1.05)))
 }
 
-#' Lead of the PPP over the DPK in every 2022 governor race: a map on a binned
-#' diverging scale and a ranked bar chart coloured by the party that led.
+#' Lead of the PPP over the DPK in every governor race of one election: a map
+#' on a binned diverging scale and a ranked bar chart coloured by the party
+#' that led.
 #'
 #' @param margins From [bloc_margin()]: `province_code` and `margin_pp`.
-plot_margin <- function(geometry, margins, provinces, parties, title, caption = NULL,
-                        limit = 70) {
+#' @param limit The largest lead the colour scale covers, in percentage points.
+plot_margin <- function(geometry, margins, provinces, parties, limit = 70,
+                        title = NULL, subtitle = NULL, caption = NULL) {
+  if (any(abs(margins$margin_pp) > limit, na.rm = TRUE)) {
+    stop("A margin is beyond the colour scale's limit of ", limit, " points", call. = FALSE)
+  }
   colours <- bloc_colours(parties)
   m <- margins
   m$label <- stats::reorder(province_labels(m$province_code, provinces), m$margin_pp)
@@ -108,20 +101,23 @@ plot_margin <- function(geometry, margins, provinces, parties, title, caption = 
 
   patchwork::wrap_plots(map, bars, widths = c(1.15, 1)) +
     patchwork::plot_annotation(
-      title = title,
-      subtitle = "Share of the PPP candidate minus share of the DPK candidate",
-      caption = caption,
-      theme = theme_election()
+      title = title, subtitle = subtitle, caption = caption, theme = theme_election()
     )
 }
 
-#' Each bloc's share in two elections, one row per province (dumbbell chart).
-plot_swing <- function(swing, provinces, parties, years, caption = NULL) {
+#' Each bloc's share in two elections, one row per province (dumbbell chart),
+#' with provinces sorted by the change in the democratic bloc's share.
+#'
+#' @param swing From [bloc_swing()].
+#' @param years Labels of the two elections, e.g. `c("2018", "2022")`.
+plot_swing <- function(swing, provinces, parties, years,
+                       title = NULL, subtitle = NULL, caption = NULL) {
   labels <- bloc_labels(parties)
   s <- swing
   s$label <- province_labels(s$province_code, provinces)
-  dpk <- s[s$bloc == "democratic", ]
-  s$label <- factor(s$label, levels = dpk$label[order(dpk$change_pp, decreasing = TRUE)])
+  democratic <- s[s$bloc == "democratic", ]
+  sorted <- democratic$label[order(democratic$change_pp, decreasing = TRUE)]
+  s$label <- factor(s$label, levels = sorted)
   s$panel <- factor(labels[s$bloc], levels = labels[unique(s$bloc)])
   missing_year <- ifelse(is.na(s$share_from), years[1], years[2])
   s$note <- ifelse(
@@ -154,15 +150,10 @@ plot_swing <- function(swing, provinces, parties, years, caption = NULL) {
     ggplot2::scale_colour_manual(values = bloc_colours(parties), guide = "none") +
     ggplot2::scale_shape_manual(values = stats::setNames(c(21, 19), years)) +
     ggplot2::scale_x_continuous(
-      limits = c(0, 100), breaks = seq(0, 80, 20), labels = percent_axis, expand = c(0, 0)
+      limits = c(0, 100), breaks = seq(0, 80, 20), labels = percent_label, expand = c(0, 0)
     ) +
     ggplot2::labs(
-      title = sprintf("Governor vote share by province, %s and %s", years[1], years[2]),
-      subtitle = paste(
-        "Labels give the change in percentage points;",
-        "provinces are sorted by the change in DPK share"
-      ),
-      x = "Vote share", y = NULL, caption = caption
+      title = title, subtitle = subtitle, x = "Vote share", y = NULL, caption = caption
     ) +
     theme_election() +
     ggplot2::theme(
@@ -174,11 +165,11 @@ plot_swing <- function(swing, provinces, parties, years, caption = NULL) {
 #' Province-level shares in two elections against each other, one panel per
 #' bloc, with the line y = x, the least-squares line and Pearson's r.
 #'
-#' @param pairs Rows of `province_code`, `bloc`, `x`, `y` for every panel.
-#' @param stats One row per bloc from [correlation_summary()] plus `bloc`.
+#' @param pairs From [paired_shares()]: `province_code`, `bloc`, `x`, `y`.
+#' @param stats From [bloc_correlations()], one row per bloc.
 #' @param panels Named vector: panel title for each bloc, in display order.
-plot_share_scatter <- function(pairs, stats, provinces, parties, panels,
-                               x_title, y_title, title, subtitle = NULL, caption = NULL) {
+plot_share_scatter <- function(pairs, stats, provinces, parties, panels, x_title, y_title,
+                               title = NULL, subtitle = NULL, caption = NULL) {
   colours <- bloc_colours(parties)
   p <- pairs[stats::complete.cases(pairs$x, pairs$y), ]
   p$label <- province_labels(p$province_code, provinces)
@@ -218,8 +209,8 @@ plot_share_scatter <- function(pairs, stats, provinces, parties, panels,
     ggplot2::facet_wrap(ggplot2::vars(.data$panel)) +
     ggplot2::scale_colour_manual(values = colours, guide = "none") +
     ggplot2::scale_fill_manual(values = colours, guide = "none") +
-    ggplot2::scale_x_continuous(breaks = seq(0, 100, 20), labels = percent_axis) +
-    ggplot2::scale_y_continuous(breaks = seq(0, 100, 20), labels = percent_axis) +
+    ggplot2::scale_x_continuous(breaks = seq(0, 100, 20), labels = percent_label) +
+    ggplot2::scale_y_continuous(breaks = seq(0, 100, 20), labels = percent_label) +
     ggplot2::coord_equal(xlim = c(0, 100), ylim = c(0, 100), expand = FALSE) +
     ggplot2::labs(title = title, subtitle = subtitle, x = x_title, y = y_title, caption = caption) +
     theme_election() +
@@ -227,14 +218,19 @@ plot_share_scatter <- function(pairs, stats, provinces, parties, panels,
 }
 
 #' Exit-poll vote share by sex and age group, with turnout underneath.
-plot_exit_poll <- function(exit_poll, parties, caption = NULL) {
+plot_exit_poll <- function(exit_poll, parties, title = NULL, subtitle = NULL, caption = NULL) {
   shown <- parties[parties$party_id %in% exit_poll$party_id, ]
   colours <- stats::setNames(shown$colour, shown$label)
   e <- exit_poll
   e$party <- factor(parties$label[match(e$party_id, parties$party_id)], levels = names(colours))
   e$sex <- factor(ifelse(e$sex == "male", "Men", "Women"), levels = c("Men", "Women"))
+  # Age groups are "20s" to "70s" (see read_exit_poll()), so text order is age order.
   e$age_group <- factor(e$age_group, levels = sort(unique(e$age_group)))
-  last <- e[e$age_group == max(levels(e$age_group)), ]
+  oldest <- e[e$age_group == levels(e$age_group)[nlevels(e$age_group)], ]
+  # Vote share and turnout share one scale, so that the two panels compare.
+  percent_scale <- ggplot2::scale_y_continuous(
+    limits = c(0, 85), breaks = seq(0, 80, 20), labels = percent_label
+  )
 
   shares <- ggplot2::ggplot(
     e, ggplot2::aes(x = .data$age_group, y = .data$vote_share_pct, colour = .data$party)
@@ -242,12 +238,12 @@ plot_exit_poll <- function(exit_poll, parties, caption = NULL) {
     ggplot2::geom_line(ggplot2::aes(group = .data$party), linewidth = 0.7) +
     ggplot2::geom_point(size = 2.4) +
     ggplot2::geom_text(
-      data = last, ggplot2::aes(label = .data$party),
+      data = oldest, ggplot2::aes(label = .data$party),
       hjust = 0, nudge_x = 0.15, size = 3, colour = CHART$ink_secondary
     ) +
     ggplot2::facet_wrap(ggplot2::vars(.data$sex)) +
     ggplot2::scale_colour_manual(values = colours) +
-    ggplot2::scale_y_continuous(limits = c(0, 85), breaks = seq(0, 80, 20), labels = percent_axis) +
+    percent_scale +
     ggplot2::labs(x = NULL, y = "Vote share") +
     theme_election()
 
@@ -269,30 +265,29 @@ plot_exit_poll <- function(exit_poll, parties, caption = NULL) {
       values = c("FALSE" = 19, "TRUE" = 21),
       labels = c("FALSE" = "Turnout", "TRUE" = "Same value as the age group before it")
     ) +
-    ggplot2::scale_y_continuous(limits = c(0, 85), breaks = seq(0, 80, 20), labels = percent_axis) +
+    percent_scale +
     ggplot2::labs(x = "Age group", y = "Turnout") +
     theme_election() +
     ggplot2::theme(strip.text = ggplot2::element_blank())
 
   patchwork::wrap_plots(shares, turnout_plot, ncol = 1, heights = c(2, 1)) +
     patchwork::plot_annotation(
-      title = "2022 local elections exit poll: party vote share by sex and age group",
-      subtitle = "Vote share of the two main parties (top) and turnout (bottom) in each group",
-      caption = caption,
-      theme = theme_election()
+      title = title, subtitle = subtitle, caption = caption, theme = theme_election()
     )
 }
 
-#' Share of each kind of local office won by each bloc, two elections compared.
+#' Share of each kind of local office won by each bloc, elections compared.
 #'
 #' @param elected_officials The tidy table (one row per party and office).
-plot_elected_officials <- function(elected_officials, offices, elections, parties, caption = NULL) {
-  order <- c("democratic", "other", "conservative")
+plot_elected_officials <- function(elected_officials, offices, elections, parties,
+                                   title = NULL, subtitle = NULL, caption = NULL) {
+  stack_order <- c("democratic", "other", "conservative")
   o <- officials_by_bloc(elected_officials, parties)
   o$office <- factor(offices$label[match(o$office, offices$office)], levels = offices$label)
-  o$year <- format(elections$date[match(o$election, elections$election)], "%Y")
+  o$year <- election_year(o$election, elections)
   o$year <- factor(o$year, levels = rev(sort(unique(o$year))))
-  o$bloc <- factor(o$bloc, levels = order)
+  o$bloc <- factor(o$bloc, levels = stack_order)
+  # Only segments wide enough to hold a label get one.
   o$text <- ifelse(o$share_pct >= 8, sprintf("%.1f%%", o$share_pct), "")
 
   ggplot2::ggplot(o, ggplot2::aes(x = .data$share_pct, y = .data$year, fill = .data$bloc)) +
@@ -303,19 +298,17 @@ plot_elected_officials <- function(elected_officials, offices, elections, partie
     ggplot2::geom_text(
       ggplot2::aes(label = .data$text),
       position = ggplot2::position_stack(vjust = 0.5, reverse = TRUE),
-      colour = "white", size = 3, fontface = "bold"
+      colour = CHART$on_fill, size = 3, fontface = "bold"
     ) +
     ggplot2::facet_wrap(ggplot2::vars(.data$office), ncol = 1) +
     ggplot2::scale_fill_manual(
-      values = bloc_colours(parties)[order], labels = bloc_labels(parties)[order],
+      values = bloc_colours(parties)[stack_order], labels = bloc_labels(parties)[stack_order],
       breaks = c("democratic", "conservative", "other")
     ) +
-    ggplot2::scale_x_continuous(breaks = seq(0, 100, 25), labels = percent_axis, expand = c(0, 0)) +
-    ggplot2::labs(
-      title = "Share of local offices won, 2018 and 2022",
-      subtitle = "Percentage of the officials elected to each kind of office, by party",
-      x = NULL, y = NULL, caption = caption
+    ggplot2::scale_x_continuous(
+      breaks = seq(0, 100, 25), labels = percent_label, expand = c(0, 0)
     ) +
+    ggplot2::labs(title = title, subtitle = subtitle, x = NULL, y = NULL, caption = caption) +
     theme_election() +
     ggplot2::theme(panel.grid.major.y = ggplot2::element_blank())
 }

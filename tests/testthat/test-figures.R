@@ -1,3 +1,6 @@
+# The figures: the figure functions and index in R/figures.R, the chart
+# builders in R/plots.R and the PNG writer in R/theme.R.
+
 d <- load_election_data()
 
 png_size <- function(path) {
@@ -17,27 +20,37 @@ test_that("save_figure writes a PNG of the requested size", {
   expect_equal(png_size(path), c(width = 200L, height = 100L))
 })
 
-test_that("every figure builder renders", {
-  winners <- province_winners(d$vote_share)
-  margins <- bloc_margin(d$vote_share, d$parties, d$provinces, "local_2022")
-  swing <- bloc_swing(d$vote_share, d$parties, d$provinces, "local_2018", "local_2022")
-  pairs <- paired_shares(
-    d$vote_share, d$parties, d$provinces, "local_2018", "local_2022", "democratic"
-  )
-  stats <- dplyr::mutate(correlation_summary(pairs$x, pairs$y), bloc = "democratic")
-  plots <- list(
-    winners = plot_winner_maps(d$geometry, winners, d$parties, d$elections),
-    margin = plot_margin(d$geometry, margins, d$provinces, d$parties, title = "t"),
-    swing = plot_swing(swing, d$provinces, d$parties, years = c("2018", "2022")),
-    scatter = plot_share_scatter(
-      pairs, stats, d$provinces, d$parties, c(democratic = "DPK"), "x", "y", "t"
-    ),
-    exit_poll = plot_exit_poll(d$exit_poll, d$parties),
-    officials = plot_elected_officials(d$elected_officials, d$offices, d$elections, d$parties)
-  )
-  dir <- tempfile("figures-")
-  for (name in names(plots)) {
-    path <- save_figure(plots[[name]], name, width = 6, height = 4, dpi = 40, dir = dir)
-    expect_equal(png_size(path), c(width = 240L, height = 160L), info = name)
+test_that("write_figures renders every figure in the index at its size", {
+  dpi <- 20
+  paths <- write_figures(d, dir = tempfile("figures-"), dpi = dpi)
+  index <- figure_index()
+  expect_identical(names(paths), names(index))
+  for (name in names(index)) {
+    size <- c(width = index[[name]]$width, height = index[[name]]$height) * dpi
+    expect_equal(png_size(paths[[name]]), round(size), info = name)
   }
+})
+
+test_that("figures/ holds exactly the indexed figures, and the README shows each", {
+  names <- names(figure_index())
+  expect_setequal(list.files(here::here("figures")), paste0(names, ".png"))
+  readme <- readLines(here::here("README.md"), encoding = "UTF-8")
+  for (name in names) {
+    expect_true(any(grepl(sprintf("(figures/%s.png)", name), readme, fixed = TRUE)), info = name)
+  }
+})
+
+test_that("the caption note on the 2018 conservative shares comes from the data", {
+  expect_identical(
+    conservative_2018_note(d),
+    paste(
+      "No LKP candidate stood in Gwangju or Jeonnam in 2018.",
+      "Jeju's 2018 race was won by an independent (51.72%); the LKP took 3.26%."
+    )
+  )
+})
+
+test_that("plot_margin refuses a margin its colour scale cannot show", {
+  margins <- dplyr::tibble(province_code = d$provinces$province_code, margin_pp = 75)
+  expect_error(plot_margin(d$geometry, margins, d$provinces, d$parties), "limit of 70")
 })
